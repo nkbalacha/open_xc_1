@@ -36,6 +36,8 @@ public class StarterActivity extends Activity {
         empty = (TextView) findViewById(R.id.empty);
     }
 
+	/* Test comment - Spencer */
+	
     @Override
     public void onPause() {
         super.onPause();
