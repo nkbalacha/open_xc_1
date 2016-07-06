@@ -8,5 +8,6 @@
     <string name="lol">lmao</string>
     <string name="empty">test1</string>
     <string name="hi">hi</string>
+    <string name="button">Click me</string>
 
 </resources>

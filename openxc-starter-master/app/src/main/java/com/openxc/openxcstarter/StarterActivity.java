@@ -9,12 +9,17 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.openxcplatform.openxcstarter.R;
 import com.openxc.VehicleManager;
 import com.openxc.measurements.Measurement;
 import com.openxc.measurements.EngineSpeed;
+
+import java.nio.MappedByteBuffer;
+import java.util.Map;
 
 public class StarterActivity extends Activity {
     private static final String TAG = "StarterActivity";
@@ -34,6 +39,7 @@ public class StarterActivity extends Activity {
         mEngineSpeedView = (TextView) findViewById(R.id.engine_speed);
         mlol = (TextView) findViewById(R.id.lol);
         empty = (TextView) findViewById(R.id.empty);
+        init();
     }
 
     @Override
@@ -62,6 +68,21 @@ public class StarterActivity extends Activity {
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
+
+    public Button MapButton;
+    public void init(){
+        MapButton = (Button)findViewById(R.id.MapButton);
+
+        MapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent changePage = new Intent(StarterActivity.this, second.class);
+
+                startActivity(changePage);
+            }
+        });
+    }
+
 
     /* This is an OpenXC measurement listener object - the type is recognized
      * by the VehicleManager as something that can receive measurement updates.

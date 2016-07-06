@@ -33,4 +33,15 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/engine_speed"
         android:text="@string/empty" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Map Page"
+        android:id="@+id/MapButton"
+        android:layout_below="@+id/lol"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp" />
+
 </RelativeLayout>
