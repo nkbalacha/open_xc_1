@@ -44,19 +44,19 @@ public class StarterActivity extends Activity {
         mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
         mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
         mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
-
+        mTestDiag = (TextView) findViewById(R.id.diag_command_test);
         Button button = (Button)findViewById(R.id.but_diag);
 
         button.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
-                        TextView myTextView = (TextView)findViewById(R.id.diag_command_test);
+                        TextView myTextView = mTestDiag;
                         VehicleMessage response = mVehicleManager.request(new DiagnosticRequest(1, 2, 3));
                         if(response != null) {
                             DiagnosticResponse diagnosticResponse = response.asDiagnosticResponse();
                             myTextView.setText(diagnosticResponse.toString());
                         } else {
-                            myTextView.setText("No diagnostic response.");
+                            myTextView.setText("No diagnostic response or no vehicle located.");
                         }
 
                     }
