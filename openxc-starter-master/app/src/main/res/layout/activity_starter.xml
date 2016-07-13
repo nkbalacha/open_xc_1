@@ -48,4 +48,17 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/but_diag" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Map"
+        android:id="@+id/but_map"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="252dp"
+        android:onClick="changeMap"/>
+
+
 </RelativeLayout>

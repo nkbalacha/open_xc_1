@@ -12,6 +12,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.openxcplatform.openxcstarter.R;
+
+import com.openxc.VehicleManager;
 
 import com.openxc.measurements.FuelConsumed;
 import com.openxc.measurements.SteeringWheelAngle;
@@ -19,8 +22,6 @@ import com.openxc.measurements.VehicleSpeed;
 import com.openxc.messages.DiagnosticRequest;
 import com.openxc.messages.DiagnosticResponse;
 import com.openxc.messages.VehicleMessage;
-import com.openxcplatform.openxcstarter.R;
-import com.openxc.VehicleManager;
 import com.openxc.measurements.Measurement;
 import com.openxc.measurements.EngineSpeed;
 
@@ -40,14 +41,14 @@ public class StarterActivity extends Activity {
         setContentView(R.layout.activity_starter);
         // grab a reference to the engine speed text object in the UI, so we can
         // manipulate its value later from Java code
-        mEngineSpeedView = (TextView) findViewById(R.id.engine_speed);
+        mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
         mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
         mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
         mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
         mTestDiag = (TextView) findViewById(R.id.diag_command_test);
-        Button button = (Button)findViewById(R.id.but_diag);
+        Button diagButton = (Button)findViewById(R.id.but_diag);
 
-        button.setOnClickListener(
+        diagButton.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         TextView myTextView = mTestDiag;
@@ -62,6 +63,7 @@ public class StarterActivity extends Activity {
                     }
                 }
         );
+
     }
 
 
