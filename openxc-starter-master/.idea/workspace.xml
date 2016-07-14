@@ -10,11 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88c1d83f-192b-4704-ac4f-562384b7ba13" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/MapReviewActivity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_map_review.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/InTransitActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/InTransitActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_in_transit.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_in_transit.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
     </list>
     <ignored path="openxc-starter-master.iws" />
@@ -58,28 +59,53 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InTransitActivity.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="InTransitActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/InTransitActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33389544">
-              <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="145" column="13" selection-start-line="145" selection-start-column="13" selection-end-line="145" selection-end-column="13" />
               <folding>
                 <element signature="docComment;class#InTransitActivity#0" expanded="false" />
                 <element signature="docComment;field#AUTO_HIDE_DELAY_MILLIS#0;class#InTransitActivity#0" expanded="false" />
                 <element signature="docComment;field#UI_ANIMATION_DELAY#0;class#InTransitActivity#0" expanded="false" />
-                <element signature="e#1658#1705#0" expanded="false" />
+                <element signature="e#1719#1766#0" expanded="false" />
                 <element signature="docComment;field#mDelayHideTouchListener#0;class#InTransitActivity#0" expanded="false" />
-                <element signature="e#4533#4679#0" expanded="true" />
-                <element signature="e#4678#4679#0" expanded="true" />
+                <element signature="e#4593#4739#0" expanded="true" />
+                <element signature="e#4738#4739#0" expanded="true" />
                 <element signature="method#onPostCreate#0;class#InTransitActivity#0" expanded="false" />
                 <element signature="method#toggle#0;class#InTransitActivity#0" expanded="false" />
                 <element signature="method#hide#0;class#InTransitActivity#0" expanded="false" />
                 <element signature="method#show#0;class#InTransitActivity#0" expanded="false" />
                 <element signature="docComment;method#delayedHide#0;class#InTransitActivity#0" expanded="false" />
                 <element signature="method#delayedHide#0;class#InTransitActivity#0" expanded="false" />
-                <element signature="e#6499#6734#0" expanded="true" />
-                <element signature="e#6733#6734#0" expanded="true" />
+                <element signature="e#6582#6817#0" expanded="true" />
+                <element signature="e#6816#6817#0" expanded="true" />
+                <element signature="e#7003#7262#0" expanded="true" />
+                <element signature="e#7261#7262#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="activity_map_review.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_map_review.xml">
+          <provider editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-4.967742">
+              <caret line="7" column="43" selection-start-line="7" selection-start-column="43" selection-end-line="7" selection-end-column="43" />
+              <folding />
+            </state>
+          </provider>
+          <provider selected="true" editor-type-id="android-designer">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MapReviewActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/MapReviewActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="17" column="26" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -88,14 +114,14 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxc/openxcstarter/StarterActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
+              <caret line="123" column="24" selection-start-line="123" selection-start-column="24" selection-end-line="123" selection-end-column="24" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#2495#3162#0" expanded="true" />
                 <element signature="e#3161#3162#0" expanded="true" />
                 <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
                 <element signature="e#3337#3408#0" expanded="false" />
                 <element signature="e#3584#3640#0" expanded="false" />
-                <element signature="method#onResume#0;class#StarterActivity#0" expanded="false" />
                 <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
                 <element signature="e#7578#7831#0" expanded="true" />
                 <element signature="e#7830#7831#0" expanded="true" />
@@ -2307,8 +2333,8 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/openxc/openxcstarter/StarterActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/InTransitActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_in_transit.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/InTransitActivity.java" />
       </list>
     </option>
   </component>
@@ -2354,6 +2380,100 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="Gradle Scripts" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openxc-starter-master" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="values" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openxc-starter-master" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openxc-starter-master" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="layout" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openxc-starter-master" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openxcstarter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openxc-starter-master" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openxcstarter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -2667,7 +2787,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1098" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32976446" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -2717,22 +2837,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_maps.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxc/openxcstarter/MapsActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="43" column="35" selection-start-line="43" selection-start-column="35" selection-end-line="43" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2761,7 +2865,7 @@
             <element signature="e#795#820#0" expanded="true" />
             <element signature="e#934#963#0" expanded="true" />
             <element signature="e#1079#1097#0" expanded="true" />
-            <element signature="e#1550#1585#0" expanded="true" />
+            <element signature="e#1730#1765#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2771,12 +2875,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="148" column="15" selection-start-line="148" selection-start-column="15" selection-end-line="148" selection-end-column="15" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#2495#3162#0" expanded="true" />
             <element signature="e#3161#3162#0" expanded="true" />
             <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
             <element signature="e#3337#3408#0" expanded="false" />
             <element signature="e#3584#3640#0" expanded="false" />
-            <element signature="method#onResume#0;class#StarterActivity#0" expanded="false" />
             <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
             <element signature="e#7578#7831#0" expanded="true" />
             <element signature="e#7830#7831#0" expanded="true" />
@@ -2848,12 +2952,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#2495#3162#0" expanded="true" />
             <element signature="e#3161#3162#0" expanded="true" />
             <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
             <element signature="e#3337#3408#0" expanded="false" />
             <element signature="e#3584#3640#0" expanded="false" />
-            <element signature="method#onResume#0;class#StarterActivity#0" expanded="false" />
             <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
             <element signature="e#7578#7831#0" expanded="true" />
             <element signature="e#7830#7831#0" expanded="true" />
@@ -2880,7 +2984,7 @@
             <element signature="e#795#820#0" expanded="true" />
             <element signature="e#934#963#0" expanded="true" />
             <element signature="e#1079#1097#0" expanded="true" />
-            <element signature="e#1550#1585#0" expanded="true" />
+            <element signature="e#1730#1765#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2920,12 +3024,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#2495#3162#0" expanded="true" />
             <element signature="e#3161#3162#0" expanded="true" />
             <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
             <element signature="e#3337#3408#0" expanded="false" />
             <element signature="e#3584#3640#0" expanded="false" />
-            <element signature="method#onResume#0;class#StarterActivity#0" expanded="false" />
             <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
             <element signature="e#7578#7831#0" expanded="true" />
             <element signature="e#7830#7831#0" expanded="true" />
@@ -2952,7 +3056,7 @@
             <element signature="e#795#820#0" expanded="true" />
             <element signature="e#934#963#0" expanded="true" />
             <element signature="e#1079#1097#0" expanded="true" />
-            <element signature="e#1550#1585#0" expanded="true" />
+            <element signature="e#1730#1765#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2992,12 +3096,12 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#2495#3162#0" expanded="true" />
             <element signature="e#3161#3162#0" expanded="true" />
             <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
             <element signature="e#3337#3408#0" expanded="false" />
             <element signature="e#3584#3640#0" expanded="false" />
-            <element signature="method#onResume#0;class#StarterActivity#0" expanded="false" />
             <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
             <element signature="e#7578#7831#0" expanded="true" />
             <element signature="e#7830#7831#0" expanded="true" />
@@ -3024,7 +3128,7 @@
             <element signature="e#795#820#0" expanded="true" />
             <element signature="e#934#963#0" expanded="true" />
             <element signature="e#1079#1097#0" expanded="true" />
-            <element signature="e#1550#1585#0" expanded="true" />
+            <element signature="e#1730#1765#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -3076,7 +3180,7 @@
             <element signature="e#795#820#0" expanded="true" />
             <element signature="e#934#963#0" expanded="true" />
             <element signature="e#1079#1097#0" expanded="true" />
-            <element signature="e#1550#1585#0" expanded="true" />
+            <element signature="e#1730#1765#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -3086,26 +3190,18 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="119" column="62" selection-start-line="119" selection-start-column="62" selection-end-line="119" selection-end-column="62" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#2495#3162#0" expanded="true" />
             <element signature="e#3161#3162#0" expanded="true" />
             <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
             <element signature="e#3337#3408#0" expanded="false" />
             <element signature="e#3584#3640#0" expanded="false" />
-            <element signature="method#onResume#0;class#StarterActivity#0" expanded="false" />
             <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
             <element signature="e#7578#7831#0" expanded="true" />
             <element signature="e#7830#7831#0" expanded="true" />
             <element signature="e#8017#8274#0" expanded="true" />
             <element signature="e#8273#8274#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/debug/res/values/google_maps_api.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.74377227">
-          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3212,23 +3308,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxc/openxcstarter/StarterActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/debug/res/values/google_maps_api.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
-          <folding>
-            <element signature="e#2495#3162#0" expanded="true" />
-            <element signature="e#3161#3162#0" expanded="true" />
-            <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
-            <element signature="e#3337#3408#0" expanded="false" />
-            <element signature="e#3584#3640#0" expanded="false" />
-            <element signature="method#onResume#0;class#StarterActivity#0" expanded="false" />
-            <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
-            <element signature="e#7578#7831#0" expanded="true" />
-            <element signature="e#7830#7831#0" expanded="true" />
-            <element signature="e#8017#8274#0" expanded="true" />
-            <element signature="e#8273#8274#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="-8.5161295">
+          <caret line="12" column="20" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -3245,28 +3329,69 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxc/openxcstarter/StarterActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="123" column="24" selection-start-line="123" selection-start-column="24" selection-end-line="123" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2495#3162#0" expanded="true" />
+            <element signature="e#3161#3162#0" expanded="true" />
+            <element signature="method#onPause#0;class#StarterActivity#0" expanded="false" />
+            <element signature="e#3337#3408#0" expanded="false" />
+            <element signature="e#3584#3640#0" expanded="false" />
+            <element signature="method#onServiceConnected#0;class#6531:7342" expanded="false" />
+            <element signature="e#7578#7831#0" expanded="true" />
+            <element signature="e#7830#7831#0" expanded="true" />
+            <element signature="e#8017#8274#0" expanded="true" />
+            <element signature="e#8273#8274#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/MapReviewActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="26" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/openxcplatform/openxcstarter/InTransitActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33389544">
-          <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="145" column="13" selection-start-line="145" selection-start-column="13" selection-end-line="145" selection-end-column="13" />
           <folding>
             <element signature="docComment;class#InTransitActivity#0" expanded="false" />
             <element signature="docComment;field#AUTO_HIDE_DELAY_MILLIS#0;class#InTransitActivity#0" expanded="false" />
             <element signature="docComment;field#UI_ANIMATION_DELAY#0;class#InTransitActivity#0" expanded="false" />
-            <element signature="e#1658#1705#0" expanded="false" />
+            <element signature="e#1719#1766#0" expanded="false" />
             <element signature="docComment;field#mDelayHideTouchListener#0;class#InTransitActivity#0" expanded="false" />
-            <element signature="e#4533#4679#0" expanded="true" />
-            <element signature="e#4678#4679#0" expanded="true" />
+            <element signature="e#4593#4739#0" expanded="true" />
+            <element signature="e#4738#4739#0" expanded="true" />
             <element signature="method#onPostCreate#0;class#InTransitActivity#0" expanded="false" />
             <element signature="method#toggle#0;class#InTransitActivity#0" expanded="false" />
             <element signature="method#hide#0;class#InTransitActivity#0" expanded="false" />
             <element signature="method#show#0;class#InTransitActivity#0" expanded="false" />
             <element signature="docComment;method#delayedHide#0;class#InTransitActivity#0" expanded="false" />
             <element signature="method#delayedHide#0;class#InTransitActivity#0" expanded="false" />
-            <element signature="e#6499#6734#0" expanded="true" />
-            <element signature="e#6733#6734#0" expanded="true" />
+            <element signature="e#6582#6817#0" expanded="true" />
+            <element signature="e#6816#6817#0" expanded="true" />
+            <element signature="e#7003#7262#0" expanded="true" />
+            <element signature="e#7261#7262#0" expanded="true" />
           </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_map_review.xml">
+      <provider editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.967742">
+          <caret line="7" column="43" selection-start-line="7" selection-start-column="43" selection-end-line="7" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
   </component>

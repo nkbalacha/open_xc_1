@@ -38,7 +38,10 @@
             android:name=".InTransitActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_in_transit"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name=".MapReviewActivity"
+            android:label="@string/title_activity_map_review"></activity>
     </application>
 
 </manifest>

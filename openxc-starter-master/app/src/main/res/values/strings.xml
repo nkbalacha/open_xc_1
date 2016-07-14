@@ -7,5 +7,6 @@
 
     <string name="title_activity_in_transit">InTransitActivity</string>
     <string name="stop_button">Stop trip</string>
+    <string name="title_activity_map_review">Map</string>
 
 </resources>
