@@ -35,6 +35,13 @@ public class StarterActivity extends Activity {
     private TextView mFuelConsumedView;
     private TextView mTestDiag;
 
+
+    /*
+     * All this stuff happens when the app is first created. It creates all the statistic views and
+     * sets the app to the StarterActivity page. Then it creates the diagnostic button and gives it
+     * an OnClickListener for diagnostic responses. Lastly it runs the method goToMap which gives
+     * the second button an onClickListener to change pages.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,11 +66,12 @@ public class StarterActivity extends Activity {
                         } else {
                             myTextView.setText("No diagnostic response or no vehicle located.");
                         }
-
                     }
                 }
         );
 
+        // runs method to make but_map work
+        goToMap();
     }
 
 
@@ -169,6 +177,21 @@ public class StarterActivity extends Activity {
             mVehicleManager = null;
         }
     };
+
+    // code that gives but_map an onClickListener to switch pages to MapsActivity
+    public Button MapButton;
+    public void goToMap(){
+        MapButton = (Button)findViewById(R.id.but_map);
+
+        MapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent changePage = new Intent(StarterActivity.this, MapsActivity.class);
+
+                startActivity(changePage);
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
