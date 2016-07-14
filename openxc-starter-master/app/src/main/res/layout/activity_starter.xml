@@ -60,5 +60,13 @@
         android:layout_marginTop="252dp"
         android:onClick="changeMap"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Smart trip"
+        android:id="@+id/but_smartTrip"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/diag_command_test" />
+
 
 </RelativeLayout>

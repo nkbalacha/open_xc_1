@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.openxcplatform.openxcstarter.InTransitActivity;
 import com.openxcplatform.openxcstarter.R;
 
 import com.openxc.VehicleManager;
@@ -74,8 +76,9 @@ public class StarterActivity extends Activity {
                 }
         );
 
-        // runs method to make but_map work
+        // start running button scripts
         goToMap();
+        goToTrip();
     }
 
 
@@ -184,7 +187,7 @@ public class StarterActivity extends Activity {
 
     // code that gives but_map an onClickListener to switch pages to MapsActivity
     public Button MapButton;
-    public void goToMap(){
+    public void goToMap() {
         MapButton = (Button)findViewById(R.id.but_map);
 
         MapButton.setOnClickListener(new View.OnClickListener() {
@@ -196,6 +199,21 @@ public class StarterActivity extends Activity {
             }
         });
     }
+
+    public Button SmartTripButton;
+    public void goToTrip() {
+        SmartTripButton = (Button)findViewById(R.id.but_smartTrip);
+
+        SmartTripButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent changePage = new Intent(StarterActivity.this, InTransitActivity.class);
+
+                startActivity(changePage);
+            }
+        });
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
