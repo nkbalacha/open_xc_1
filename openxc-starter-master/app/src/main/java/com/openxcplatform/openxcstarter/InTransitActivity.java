@@ -7,12 +7,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class InTransitActivity extends Activity {
+
+    private TextView mBackground;
+    int images[] = {R.drawable.happy_driving, R.drawable.sad_driving,
+            R.drawable.displeased_driving, R.drawable.ok_driving};
+    private static int currentBackground = 0;
+
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -106,6 +120,23 @@ public class InTransitActivity extends Activity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        /*
+         * MARKER, WE WROTE WHAT'S UNDER HERE
+         *
+         *
+         */
+        mBackground = (TextView)findViewById(R.id.fullscreen_content);
+
+        Timer myTimer = new Timer();
+        myTimer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                TimerMethod();
+            }
+        }, 0, 9000);
     }
 
     @Override
@@ -159,5 +190,22 @@ public class InTransitActivity extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+
+    /*
+     * THIS IS WHERE WE WROTE STUFF
+     *
+     *
+     */
+    public void TimerMethod()
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBackground.setBackgroundResource(images[currentBackground]);
+                currentBackground = (currentBackground + 1)%4;
+            }
+        });
     }
 }
