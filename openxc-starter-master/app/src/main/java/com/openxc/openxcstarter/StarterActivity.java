@@ -48,13 +48,17 @@ public class StarterActivity extends Activity {
         setContentView(R.layout.activity_starter);
         // grab a reference to the engine speed text object in the UI, so we can
         // manipulate its value later from Java code
+
+        // all the TextViews
         mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
         mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
         mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
         mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
+
+        // the diag stuff
         mTestDiag = (TextView) findViewById(R.id.diag_command_test);
         Button diagButton = (Button)findViewById(R.id.but_diag);
-
+        // diag button onClick
         diagButton.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
