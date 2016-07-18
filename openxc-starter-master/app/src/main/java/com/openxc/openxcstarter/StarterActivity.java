@@ -77,7 +77,7 @@ public class StarterActivity extends Activity {
         );*/
 
         // start running button scripts
-        goToMap();
+        //goToMap(); commented out
         goToTrip();
     }
 
@@ -185,8 +185,8 @@ public class StarterActivity extends Activity {
         }
     };
 
-    // code that gives but_map an onClickListener to switch pages to MapsActivity
-    public Button MapButton;
+    // code that gives but_map an onClickListener to switch pages to MapsActivity, removed
+    /* public Button MapButton;
     public void goToMap() {
         MapButton = (Button)findViewById(R.id.but_map);
 
@@ -198,7 +198,7 @@ public class StarterActivity extends Activity {
                 startActivity(changePage);
             }
         });
-    }
+    } */
 
     public Button SmartTripButton;
     public void goToTrip() {

@@ -65,7 +65,7 @@
 
     -->
 
-    <!-- General Map button -->
+    <!-- General Map button, removed
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -77,6 +77,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="252dp"
         android:onClick="changeMap"/>
+    -->
 
     <!-- Smart trip button -->
     <Button
