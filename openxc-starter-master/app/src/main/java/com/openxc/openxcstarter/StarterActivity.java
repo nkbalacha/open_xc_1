@@ -35,7 +35,7 @@ public class StarterActivity extends Activity {
     private TextView mVehicleSpeedView;
     private TextView mSteeringAngleView;
     private TextView mFuelConsumedView;
-    private TextView mTestDiag;
+    //private TextView mTestDiag;
 
 
     /*
