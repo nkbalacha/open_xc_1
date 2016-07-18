@@ -41,7 +41,10 @@
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".MapReviewActivity"
-            android:label="@string/title_activity_map_review"></activity>
+            android:label="@string/title_activity_map_review" />
+        <activity
+            android:name="com.openxc.openxcstarter.MainActivity"
+            android:label="@string/title_activity_main"></activity>
     </application>
 
 </manifest>
