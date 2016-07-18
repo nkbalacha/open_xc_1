@@ -57,8 +57,8 @@ public class StarterActivity extends Activity {
         mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
         mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
 
-        // the diag stuff
-        mTestDiag = (TextView) findViewById(R.id.diag_command_test);
+        // the diag stuff, taken out for now
+        /*mTestDiag = (TextView) findViewById(R.id.diag_command_test);
         Button diagButton = (Button)findViewById(R.id.but_diag);
         // diag button onClick
         diagButton.setOnClickListener(
@@ -74,7 +74,7 @@ public class StarterActivity extends Activity {
                         }
                     }
                 }
-        );
+        );*/
 
         // start running button scripts
         goToMap();
