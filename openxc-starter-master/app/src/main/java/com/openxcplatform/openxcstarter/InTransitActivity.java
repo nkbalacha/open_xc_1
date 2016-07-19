@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -24,9 +25,11 @@ import java.util.TimerTask;
 public class InTransitActivity extends Activity {
 
     private TextView mBackground;
-    int images[] = {R.drawable.happy_driving, R.drawable.sad_driving,
+    private int red = 255;
+    private int green = 0;
+    /*int images[] = {R.drawable.happy_driving, R.drawable.sad_driving,
             R.drawable.displeased_driving, R.drawable.ok_driving};
-    private static int currentBackground = 0;
+    private static int currentBackground = 0;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,7 @@ public class InTransitActivity extends Activity {
             {
                 TimerMethod();
             }
-        }, 0, 9000);
+        }, 0, 100);
 
         goToReview();
     }
@@ -60,8 +63,13 @@ public class InTransitActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mBackground.setBackgroundResource(images[currentBackground]);
-                currentBackground = (currentBackground + 1)%4;
+                if (green < 250) {
+                    mBackground.setBackgroundColor(Color.argb(255, red, green, 0));
+                    red = red - 1;
+                    green = green + 1;
+                } else {
+                    mBackground.setBackgroundResource(R.drawable.happy_driving);
+                }
             }
         });
     }
