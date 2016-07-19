@@ -52,10 +52,10 @@ public class StarterActivity extends Activity {
         // manipulate its value later from Java code
 
         // all the TextViews
-        mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
-        mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
-        mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
-        mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
+        //mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
+        //mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
+        //mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
+        //mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
 
         // the diag stuff, taken out for now
         /*mTestDiag = (TextView) findViewById(R.id.diag_command_test);
