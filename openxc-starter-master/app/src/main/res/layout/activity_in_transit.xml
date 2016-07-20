@@ -23,7 +23,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:focusable="false">
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
@@ -38,10 +39,13 @@
             <Button
                 android:id="@+id/stop_button"
                 style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/stop_button" />
+                android:text="@string/stop_button"
+                android:textSize="46sp" />
+
+
 
         </LinearLayout>
 

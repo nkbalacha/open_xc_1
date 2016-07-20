@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.icu.util.Measure;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,14 +24,13 @@ import com.openxc.measurements.EngineSpeed;
 import com.openxc.measurements.Measurement;
 import com.openxc.measurements.SteeringWheelAngle;
 import com.openxc.measurements.VehicleSpeed;
+import com.openxc.measurements.Latitude;
+import com.openxc.measurements.Longitude;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 public class InTransitActivity extends Activity {
     private static final String TAG = "InTransitActivity";
 
@@ -38,11 +38,21 @@ public class InTransitActivity extends Activity {
     private TextView mBackground;
     private int red = 0;
     private int green = 255;
+    private int place = 0;
 
+    // OpenXC data
     private VehicleManager mVehicleManager;
     private EngineSpeed engSpeed;
     private VehicleSpeed vehSpeed;
     private SteeringWheelAngle swAngle;
+    private double lat;
+    private double lng;
+
+    // map coordinates
+    private ArrayList<Double> totalLat = new ArrayList<>();
+    private ArrayList<Double> totalLong = new ArrayList<>();
+    private ArrayList<Double> ruleLat = new ArrayList<>();
+    private ArrayList<Double> ruleLong = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +72,12 @@ public class InTransitActivity extends Activity {
             {
                 redToGreen();
             }
-        }, 0, 100);
+        }, 0, 500);
 
+        // buttons
         goToReview();
         testRule();
+        getLocation();
     }
 
     @Override
@@ -79,6 +91,8 @@ public class InTransitActivity extends Activity {
                     mVSpeedListener);
             mVehicleManager.removeListener(SteeringWheelAngle.class,
                     mWheelAngleListener);
+            mVehicleManager.removeListener(Latitude.class, mLatListener);
+            mVehicleManager.removeListener(Longitude.class, mLongListener);
 
             unbindService(mConnection);
             mVehicleManager = null;
@@ -133,6 +147,33 @@ public class InTransitActivity extends Activity {
         }
     };
 
+    Latitude.Listener mLatListener = new Latitude.Listener(){
+        @Override
+        public void receive(Measurement measurement) {
+            final Latitude lati = (Latitude) measurement;
+            InTransitActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    lat = lati.getValue().doubleValue();
+                }
+            });
+        }
+    };
+
+    Longitude.Listener mLongListener = new Longitude.Listener() {
+        @Override
+        public void receive(Measurement measurement) {
+            final Longitude lg = (Longitude) measurement;
+            InTransitActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    lng = lg.getValue().doubleValue();
+                }
+            });
+        }
+    };
+
+
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
@@ -143,6 +184,8 @@ public class InTransitActivity extends Activity {
             mVehicleManager.addListener(EngineSpeed.class, mEngineSpeedListener);
             mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
             mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
+            mVehicleManager.addListener(Latitude.class, mLatListener);
+            mVehicleManager.addListener(Longitude.class, mLongListener);
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -163,16 +206,17 @@ public class InTransitActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (green == 255 && red == 0) {
-                //    mBackground.setBackgroundResource(R.drawable.happy_driving);
+                if (place == 0) {
+                    mBackground.setBackgroundResource(R.drawable.happy_driving);
                 } else {
-                    if (red > 0) {
-                        red--;
+                    if (place > 0 && place < 256) {
+                        place--;
                     }
-                    if (green < 255) {
-                        green++;
+                    if (place > 255) {
+                        place = 255;
                     }
-                    mBackground.setBackgroundColor(Color.argb(255, red, green, 0));
+                    mBackground.setBackgroundColor(Color.argb(255, red + place, green - place, 0));
+                    System.out.println(place);
                 }
             }
         });
@@ -183,14 +227,8 @@ public class InTransitActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (engSpeed.getValue().doubleValue() > 685) {
-                    red = red + 60;
-                    green = green - 60;
-                    /*try {
-                        Thread.sleep(8000);
-                    } catch(InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }*/
+                if (engSpeed.getValue().doubleValue() > 693) {
+                    place = place + 60;
                 }
             }
         });
@@ -203,9 +241,15 @@ public class InTransitActivity extends Activity {
         MapReviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent changePage = new Intent(InTransitActivity.this, MapReviewActivity.class);
+                Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity.class);
 
-                startActivity(changePage);
+                transferMapData.putExtra("latitude", totalLat);
+                transferMapData.putExtra("longitude", totalLong);
+                transferMapData.putExtra("ruleLatitude", ruleLat);
+                transferMapData.putExtra("ruleLongitude", ruleLong);
+
+                startActivity(transferMapData);
+
             }
         });
     }
@@ -217,9 +261,16 @@ public class InTransitActivity extends Activity {
         TestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                red = red + 60;
-                green = green - 60;
+                place = place + 60;
+                System.out.println(place);
+                ruleLat.add(lat);
+                ruleLong.add(lng);
             }
         });
+    }
+
+    public void getLocation() {
+        totalLat.add(lat);
+        totalLong.add(lng);
     }
 }
