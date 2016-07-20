@@ -10,9 +10,9 @@
     <string name="title_activity_map_review">Map</string>
     <string name="title_activity_start">StartActivity</string>
 
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">Profile</string>
+    <string name="title_section2">My Trips</string>
+    <string name="title_section3">Stats</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -2,12 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="#00FF00"
     tools:context="com.openxcplatform.openxcstarter.InTransitActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
+
     <TextView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
         android:gravity="center"
         android:keepScreenOn="true"
         android:background="@drawable/happy_driving" />
+
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -42,6 +44,14 @@
                 android:text="@string/stop_button" />
 
         </LinearLayout>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="test button"
+            android:id="@+id/test_Button"
+            android:layout_gravity="right|top" />
     </FrameLayout>
 
 </FrameLayout>

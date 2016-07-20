@@ -27,7 +27,6 @@ import android.widget.TextView;
 
 import com.openxc.VehicleManager;
 import com.openxc.measurements.EngineSpeed;
-import com.openxc.measurements.FuelConsumed;
 import com.openxc.measurements.Measurement;
 import com.openxc.measurements.SteeringWheelAngle;
 import com.openxc.measurements.VehicleSpeed;
@@ -36,10 +35,11 @@ public class StartActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String TAG = "StartActivity";
 
-    private VehicleManager mVehicleManager;
-    protected EngineSpeed engSpeed;
-    protected VehicleSpeed vehSpeed;
-    protected SteeringWheelAngle swAngle;
+    /*private VehicleManager mVehicleManager;
+    private EngineSpeed engSpeed;
+    private VehicleSpeed vehSpeed;
+    private SteeringWheelAngle swAngle;
+    */
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -68,6 +68,7 @@ public class StartActivity extends Activity
         goToTrip();
     }
 
+    /*
     @Override
     public void onPause() {
         super.onPause();
@@ -88,7 +89,10 @@ public class StartActivity extends Activity
             mVehicleManager = null;
         }
     }
+    */
 
+
+    /*
     @Override
     public void onResume() {
         super.onResume();
@@ -97,7 +101,9 @@ public class StartActivity extends Activity
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
+    */
 
+    /*
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         @Override
         public void receive(Measurement measurement) {
@@ -151,7 +157,7 @@ public class StartActivity extends Activity
             mVehicleManager = null;
         }
     };
-
+    */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
