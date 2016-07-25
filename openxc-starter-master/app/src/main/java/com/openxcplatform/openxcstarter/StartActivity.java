@@ -1,4 +1,4 @@
-package com.openxc.openxcstarter;
+package com.openxcplatform.openxcstarter;
 
 import android.app.Activity;
 
@@ -12,6 +12,7 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.service.wallpaper.WallpaperService;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,43 +25,36 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 import com.openxc.VehicleManager;
 import com.openxc.measurements.EngineSpeed;
-import com.openxc.measurements.FuelConsumed;
 import com.openxc.measurements.Measurement;
 import com.openxc.measurements.SteeringWheelAngle;
 import com.openxc.measurements.VehicleSpeed;
-import com.openxcplatform.openxcstarter.InTransitActivity;
-import com.openxcplatform.openxcstarter.R;
 
-public class MainActivity extends Activity
+public class StartActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "StartActivity";
 
+    /*private VehicleManager mVehicleManager;
+    private EngineSpeed engSpeed;
+    private VehicleSpeed vehSpeed;
+    private SteeringWheelAngle swAngle;
+    */
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-    private VehicleManager mVehicleManager;
-    private TextView mEngineSpeedView;
-    private TextView mVehicleSpeedView;
-    private TextView mSteeringAngleView;
-    private TextView mFuelConsumedView;
-
-
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_start);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -71,16 +65,10 @@ public class MainActivity extends Activity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-
-        mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
-        mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
-        mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
-        mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
-
         goToTrip();
-
     }
 
+    /*
     @Override
     public void onPause() {
         super.onPause();
@@ -96,14 +84,15 @@ public class MainActivity extends Activity
                     mVSpeedListener);
             mVehicleManager.removeListener(SteeringWheelAngle.class,
                     mWheelAngleListener);
-            mVehicleManager.removeListener(FuelConsumed.class,
-                    mFuelListener);
 
             unbindService(mConnection);
             mVehicleManager = null;
         }
     }
+    */
 
+
+    /*
     @Override
     public void onResume() {
         super.onResume();
@@ -112,15 +101,16 @@ public class MainActivity extends Activity
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
+    */
 
+    /*
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         @Override
         public void receive(Measurement measurement) {
             final EngineSpeed speed = (EngineSpeed) measurement;
-            MainActivity.this.runOnUiThread(new Runnable() {
+            StartActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    mEngineSpeedView.setText("Engine speed (RPM): "
-                            + speed.getValue().doubleValue());
+                    engSpeed = speed;
                 }
             });
         }
@@ -129,11 +119,10 @@ public class MainActivity extends Activity
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             final VehicleSpeed speed = (VehicleSpeed) measurement;
-            MainActivity.this.runOnUiThread(new Runnable() {
+            StartActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mVehicleSpeedView.setText("Vehicle speed (KM/H): "
-                            + speed.getValue().doubleValue());
+                    vehSpeed = speed;
                 }
             });
         }
@@ -142,24 +131,10 @@ public class MainActivity extends Activity
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         public void receive(Measurement measurement) {
             final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
-            MainActivity.this.runOnUiThread(new Runnable() {
+            StartActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mSteeringAngleView.setText("Steering Wheel Angle: "
-                            + angle.getValue().doubleValue());
-                }
-            });
-        }
-    };
-
-    FuelConsumed.Listener mFuelListener = new FuelConsumed.Listener() {
-        public void receive(Measurement measurement) {
-            final FuelConsumed fuel = (FuelConsumed) measurement;
-            MainActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mFuelConsumedView.setText("Fuel Consumed: "
-                            + fuel.getValue().doubleValue());
+                    swAngle = angle;
                 }
             });
         }
@@ -175,7 +150,6 @@ public class MainActivity extends Activity
             mVehicleManager.addListener(EngineSpeed.class, mEngineSpeedListener);
             mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
             mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
-            mVehicleManager.addListener(FuelConsumed.class, mFuelListener);
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -183,21 +157,7 @@ public class MainActivity extends Activity
             mVehicleManager = null;
         }
     };
-
-    public Button SmartTripButton;
-    public void goToTrip() {
-        SmartTripButton = (Button)findViewById(R.id.but_smartTrip);
-
-        SmartTripButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Intent changePage = new Intent(MainActivity.this, InTransitActivity.class);
-
-                startActivity(changePage);
-            }
-        });
-    }
-
+    */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
@@ -256,16 +216,30 @@ public class MainActivity extends Activity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_start, container, false);
             return rootView;
         }
 
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
+            ((StartActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
+    }
+
+    public Button SmartTripButton;
+    public void goToTrip() {
+        SmartTripButton = (Button)findViewById(R.id.but_smartTrip);
+
+        SmartTripButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent changePage = new Intent(StartActivity.this, InTransitActivity.class);
+
+                startActivity(changePage);
+            }
+        });
     }
 
 }

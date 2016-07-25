@@ -1,3 +1,8 @@
+
+
+// Commenting this out because we don't actually need this entire class
+
+/*
 package com.openxc.openxcstarter;
 
 import android.support.v4.app.FragmentActivity;
@@ -42,3 +47,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         );
     }
 }
+*/

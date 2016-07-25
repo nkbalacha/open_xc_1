@@ -35,7 +35,7 @@ public class StarterActivity extends Activity {
     private TextView mVehicleSpeedView;
     private TextView mSteeringAngleView;
     private TextView mFuelConsumedView;
-    private TextView mTestDiag;
+    //private TextView mTestDiag;
 
 
     /*
@@ -52,13 +52,13 @@ public class StarterActivity extends Activity {
         // manipulate its value later from Java code
 
         // all the TextViews
-        mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
-        mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
-        mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
-        mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
+        //mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
+        //mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
+        //mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
+        //mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
 
-        // the diag stuff
-        mTestDiag = (TextView) findViewById(R.id.diag_command_test);
+        // the diag stuff, taken out for now
+        /*mTestDiag = (TextView) findViewById(R.id.diag_command_test);
         Button diagButton = (Button)findViewById(R.id.but_diag);
         // diag button onClick
         diagButton.setOnClickListener(
@@ -74,10 +74,10 @@ public class StarterActivity extends Activity {
                         }
                     }
                 }
-        );
+        );*/
 
         // start running button scripts
-        goToMap();
+        //goToMap(); commented out
         goToTrip();
     }
 
@@ -185,8 +185,8 @@ public class StarterActivity extends Activity {
         }
     };
 
-    // code that gives but_map an onClickListener to switch pages to MapsActivity
-    public Button MapButton;
+    // code that gives but_map an onClickListener to switch pages to MapsActivity, removed
+    /* public Button MapButton;
     public void goToMap() {
         MapButton = (Button)findViewById(R.id.but_map);
 
@@ -198,7 +198,7 @@ public class StarterActivity extends Activity {
                 startActivity(changePage);
             }
         });
-    }
+    } */
 
     public Button SmartTripButton;
     public void goToTrip() {

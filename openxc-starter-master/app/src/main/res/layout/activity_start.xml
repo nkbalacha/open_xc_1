@@ -4,33 +4,39 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openxc.openxcstarter.MainActivity">
+    tools:context="com.openxcplatform.openxcstarter.StartActivity">
 
     <!-- As the main content view, the view below consumes the entire
          space available using match_parent in both dimensions. -->
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+
+        <!-- Smart trip button -->
+        <Button
+            android:id="@+id/but_smartTrip"
+            android:text="Smart trip"
+            android:textSize="46sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_horizontal|bottom" />
+
+
+    </FrameLayout>
 
     <!-- The drawer is given a fixed width in dp and extends the full height of
          the container. -->
     <fragment
         android:id="@+id/navigation_drawer"
-        android:name="com.openxc.openxcstarter.NavigationDrawerFragment"
+        android:name="com.openxcplatform.openxcstarter.NavigationDrawerFragment"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        tools:layout="@layout/drawer_main" />
-
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Smart trip"
-        android:id="@+id/but_smartTrip"
-        android:layout_alignParentBottom="true" />
-
-
+        tools:layout="@layout/drawer_start" />
 
 </android.support.v4.widget.DrawerLayout>

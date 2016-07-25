@@ -1,4 +1,4 @@
-package com.openxc.openxcstarter;
+package com.openxcplatform.openxcstarter;
 
 
 import android.app.Activity;
@@ -21,8 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.openxcplatform.openxcstarter.R;
-
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -92,7 +90,7 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(
-                R.layout.drawer_main, container, false);
+                R.layout.drawer_start, container, false);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
