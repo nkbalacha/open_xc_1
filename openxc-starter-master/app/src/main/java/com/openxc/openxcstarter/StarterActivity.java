@@ -9,10 +9,21 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.openxcplatform.openxcstarter.InTransitActivity;
 import com.openxcplatform.openxcstarter.R;
+
 import com.openxc.VehicleManager;
+
+import com.openxc.measurements.FuelConsumed;
+import com.openxc.measurements.SteeringWheelAngle;
+import com.openxc.measurements.VehicleSpeed;
+import com.openxc.messages.DiagnosticRequest;
+import com.openxc.messages.DiagnosticResponse;
+import com.openxc.messages.VehicleMessage;
 import com.openxc.measurements.Measurement;
 import com.openxc.measurements.EngineSpeed;
 
@@ -21,23 +32,56 @@ public class StarterActivity extends Activity {
 
     private VehicleManager mVehicleManager;
     private TextView mEngineSpeedView;
-    private TextView mlol;
-    private TextView empty;
-    public String buffer = "n";
+    private TextView mVehicleSpeedView;
+    private TextView mSteeringAngleView;
+    private TextView mFuelConsumedView;
+    //private TextView mTestDiag;
 
+
+    /*
+     * All this stuff happens when the app is first created. It creates all the statistic views and
+     * sets the app to the StarterActivity page. Then it creates the diagnostic button and gives it
+     * an OnClickListener for diagnostic responses. Lastly it runs the method goToMap which gives
+     * the second button an onClickListener to change pages.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_starter);
         // grab a reference to the engine speed text object in the UI, so we can
         // manipulate its value later from Java code
-        mEngineSpeedView = (TextView) findViewById(R.id.engine_speed);
-        mlol = (TextView) findViewById(R.id.lol);
-        empty = (TextView) findViewById(R.id.empty);
+
+        // all the TextViews
+        //mEngineSpeedView = (TextView) findViewById(R. id.engine_speed);
+        //mVehicleSpeedView = (TextView) findViewById(R.id.vehicle_speed);
+        //mSteeringAngleView = (TextView) findViewById(R.id.steering_angle);
+        //mFuelConsumedView = (TextView) findViewById(R.id.fuel_consumption);
+
+        // the diag stuff, taken out for now
+        /*mTestDiag = (TextView) findViewById(R.id.diag_command_test);
+        Button diagButton = (Button)findViewById(R.id.but_diag);
+        // diag button onClick
+        diagButton.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        TextView myTextView = mTestDiag;
+                        VehicleMessage response = mVehicleManager.request(new DiagnosticRequest(1, 2, 3));
+                        if(response != null) {
+                            DiagnosticResponse diagnosticResponse = response.asDiagnosticResponse();
+                            myTextView.setText(diagnosticResponse.toString());
+                        } else {
+                            myTextView.setText("No diagnostic response or no vehicle located.");
+                        }
+                    }
+                }
+        );*/
+
+        // start running button scripts
+        //goToMap(); commented out
+        goToTrip();
     }
 
-	/* Test comment - Spencer */
-	
+
     @Override
     public void onPause() {
         super.onPause();
@@ -48,7 +92,14 @@ public class StarterActivity extends Activity {
             // Remember to remove your listeners, in typical Android
             // fashion.
             mVehicleManager.removeListener(EngineSpeed.class,
-                    mSpeedListener);
+                    mEngineSpeedListener);
+            mVehicleManager.removeListener(VehicleSpeed.class,
+                    mVSpeedListener);
+            mVehicleManager.removeListener(SteeringWheelAngle.class,
+                    mWheelAngleListener);
+            mVehicleManager.removeListener(FuelConsumed.class,
+                    mFuelListener);
+
             unbindService(mConnection);
             mVehicleManager = null;
         }
@@ -57,76 +108,115 @@ public class StarterActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        // When the activity starts up or returns from the background,
-        // re-connect to the VehicleManager so we can receive updates.
         if(mVehicleManager == null) {
             Intent intent = new Intent(this, VehicleManager.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
 
-    /* This is an OpenXC measurement listener object - the type is recognized
-     * by the VehicleManager as something that can receive measurement updates.
-     * Later in the file, we'll ask the VehicleManager to call the receive()
-     * function here whenever a new EngineSpeed value arrives.
-     */
-    EngineSpeed.Listener mSpeedListener = new EngineSpeed.Listener() {
+    EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         @Override
         public void receive(Measurement measurement) {
-            // When we receive a new EngineSpeed value from the car, we want to
-            // update the UI to display the new value. First we cast the generic
-            // Measurement back to the type we know it to be, an EngineSpeed.
             final EngineSpeed speed = (EngineSpeed) measurement;
-            // In order to modify the UI, we have to make sure the code is
-            // running on the "UI thread" - Google around for this, it's an
-            // important concept in Android.
             StarterActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    // Finally, we've got a new value and we're running on the
-                    // UI thread - we set the text of the EngineSpeed view to
-                    // the latest value
                     mEngineSpeedView.setText("Engine speed (RPM): "
                             + speed.getValue().doubleValue());
-                    if(speed.getValue().doubleValue() > 680){
-                        mlol.setText("New Text" + buffer);
-                        buffer = buffer + "strike \n" ;
-                    } else {
-                        empty= (TextView) findViewById(R.id.empty);
-                    }
                 }
             });
         }
     };
 
+    VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
+        public void receive(Measurement measurement) {
+            final VehicleSpeed speed = (VehicleSpeed) measurement;
+            StarterActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mVehicleSpeedView.setText("Vehicle speed (KM/H): "
+                            + speed.getValue().doubleValue());
+                }
+            });
+        }
+    };
+
+    SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
+        public void receive(Measurement measurement) {
+            final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
+            StarterActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mSteeringAngleView.setText("Steering Wheel Angle: "
+                            + angle.getValue().doubleValue());
+                }
+            });
+        }
+    };
+
+    FuelConsumed.Listener mFuelListener = new FuelConsumed.Listener() {
+        public void receive(Measurement measurement) {
+            final FuelConsumed fuel = (FuelConsumed) measurement;
+            StarterActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mFuelConsumedView.setText("Fuel Consumed: "
+                            + fuel.getValue().doubleValue());
+                }
+            });
+        }
+    };
+    
     private ServiceConnection mConnection = new ServiceConnection() {
-        // Called when the connection with the VehicleManager service is
-        // established, i.e. bound.
         public void onServiceConnected(ComponentName className,
                 IBinder service) {
             Log.i(TAG, "Bound to VehicleManager");
-            // When the VehicleManager starts up, we store a reference to it
-            // here in "mVehicleManager" so we can call functions on it
-            // elsewhere in our code.
             mVehicleManager = ((VehicleManager.VehicleBinder) service)
                     .getService();
 
-            // We want to receive updates whenever the EngineSpeed changes. We
-            // have an EngineSpeed.Listener (see above, mSpeedListener) and here
-            // we request that the VehicleManager call its receive() method
-            // whenever the EngineSpeed changes
-            mVehicleManager.addListener(EngineSpeed.class, mSpeedListener);
+            mVehicleManager.addListener(EngineSpeed.class, mEngineSpeedListener);
+            mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
+            mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
+            mVehicleManager.addListener(FuelConsumed.class, mFuelListener);
         }
 
-        // Called when the connection with the service disconnects unexpectedly
         public void onServiceDisconnected(ComponentName className) {
             Log.w(TAG, "VehicleManager Service  disconnected unexpectedly");
             mVehicleManager = null;
         }
     };
 
+    // code that gives but_map an onClickListener to switch pages to MapsActivity, removed
+    /* public Button MapButton;
+    public void goToMap() {
+        MapButton = (Button)findViewById(R.id.but_map);
+
+        MapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent changePage = new Intent(StarterActivity.this, MapsActivity.class);
+
+                startActivity(changePage);
+            }
+        });
+    } */
+
+    public Button SmartTripButton;
+    public void goToTrip() {
+        SmartTripButton = (Button)findViewById(R.id.but_smartTrip);
+
+        SmartTripButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent changePage = new Intent(StarterActivity.this, InTransitActivity.class);
+
+                startActivity(changePage);
+            }
+        });
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.starter, menu);
         return true;
     }
