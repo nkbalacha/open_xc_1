@@ -1,0 +1,22 @@
+Description:
+A counter is used to keep track of how often the driver exceeds 90% throttle. When the threshold is reached, the algorithm will send the appropriate message for a violation.
+
+The counter starts at 0, the throttle value is measured every 1 seconds, and each time it exceeds 90%, the counter increments by 1. If the threshold (counter = 3) is not reached yet, and a measurement is <90%, the counter goes back to zero. If the threshold IS reached, the polling loop enters a refractory period: the counter will keep incrementing until it hits 10, and then it resets to zero (this ensures that you can only get 1 violation every 10 seconds).
+
+Pseudocode:
+counter = 0;
+while polling {
+	measure throttle;
+  switch (counter) {
+    case 3:   send message for violation;		//send a violation, and fall down to default to add 1 to counter
+							delay for 6 seconds;
+							counter = 0;
+							break;
+    default:	if (throttle < 90%) counter = 0;
+							else counter++;
+  }                                         
+  delay for 1 second;
+}
+  
+  
+  
