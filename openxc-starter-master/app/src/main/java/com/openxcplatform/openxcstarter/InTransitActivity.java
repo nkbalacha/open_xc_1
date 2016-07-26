@@ -1,22 +1,16 @@
 package com.openxcplatform.openxcstarter;
 
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.icu.util.Measure;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.openxc.VehicleManager;
@@ -38,21 +32,24 @@ public class InTransitActivity extends Activity {
     private TextView mBackground;
     private int red = 0;
     private int green = 255;
-    private int place = 0;
+    private static int place = 0;
 
     // OpenXC data
     private VehicleManager mVehicleManager;
-    private EngineSpeed engSpeed;
-    private VehicleSpeed vehSpeed;
-    private SteeringWheelAngle swAngle;
-    private double lat;
-    private double lng;
+    private static EngineSpeed engSpeed;
+    private static VehicleSpeed vehSpeed;
+    private static SteeringWheelAngle swAngle;
+    private static double lat;
+    private static double lng;
 
     // map coordinates
     private ArrayList<Double> totalLat = new ArrayList<>();
     private ArrayList<Double> totalLong = new ArrayList<>();
     private ArrayList<Double> ruleLat = new ArrayList<>();
     private ArrayList<Double> ruleLong = new ArrayList<>();
+
+    // rules
+    private BasicRules standardRules = new BasicRules();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +71,16 @@ public class InTransitActivity extends Activity {
             }
         }, 0, 500);
 
+
         // buttons
         goToReview();
         testRule();
-        getLocation();
+        //    getLocation();
+        /*if (engSpeed != null) {
+            BasicRules.ruleOne();
+        }*/
     }
+
 
     @Override
     public void onPause() {
@@ -115,7 +117,6 @@ public class InTransitActivity extends Activity {
             InTransitActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     engSpeed = speed;
-                    rule();
                 }
             });
         }
@@ -155,6 +156,7 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     lat = lati.getValue().doubleValue();
+                    totalLat.add(lat);
                 }
             });
         }
@@ -168,6 +170,7 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     lng = lg.getValue().doubleValue();
+                    totalLong.add(lng);
                 }
             });
         }
@@ -222,17 +225,19 @@ public class InTransitActivity extends Activity {
         });
     }
 
-    public void rule()
+
+    // moved to BasicRules class
+    /*public void rule()
     {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (engSpeed.getValue().doubleValue() > 693) {
+                if (engSpeed.getValue().doubleValue() > 1000) {
                     place = place + 60;
                 }
             }
         });
-    }
+    }*/
 
     public Button MapReviewButton;
     public void goToReview() {
@@ -269,8 +274,23 @@ public class InTransitActivity extends Activity {
         });
     }
 
-    public void getLocation() {
+    /*public void getLocation() {
         totalLat.add(lat);
         totalLong.add(lng);
+    }*/
+
+
+    // getters and setters
+    public static double getEng () {
+        return engSpeed.getValue().doubleValue();
     }
+
+    public static double getVeh () { return vehSpeed.getValue().doubleValue();}
+
+    public static double getSWAngle () { return swAngle.getValue().doubleValue();}
+
+    public static void setPlace(int newPlace) {
+        place = place + newPlace;
+    }
+
 }
