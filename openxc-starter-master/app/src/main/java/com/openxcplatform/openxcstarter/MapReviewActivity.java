@@ -71,5 +71,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i))).title("broken rule"));
         }
+        System.out.println("Latitudes: " + tRuleLat);
+        System.out.println("Longitude: " + tRuleLong);
     }
 }

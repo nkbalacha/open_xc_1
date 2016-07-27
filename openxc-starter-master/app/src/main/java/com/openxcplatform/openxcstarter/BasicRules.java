@@ -18,8 +18,10 @@ public class BasicRules extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (InTransitActivity.getEng() > 900) {
-                    InTransitActivity.setPlace(20);
+                if (InTransitActivity.getEng() > 4000) {
+                    InTransitActivity.setPlace(40);
+                } else {
+                    System.out.println("running ruleOne");
                 }
             }
         });
@@ -52,14 +54,15 @@ public class BasicRules extends Activity {
                 angleQueue[i] = InTransitActivity.getSWAngle();
                 i = (i + 1) % 4;
                 if (angleQueue.length == 4) {
-                    if(limit(angleQueue) > 180) {
-                        InTransitActivity.setPlace(40);
+                    if(limit(angleQueue) > 90) {
+                        InTransitActivity.setPlace(30);
                     }
                 }
             }
-        }, 0, 125);
+        }, 0, 62);
     }
 
+    // helper for rule three
     public double limit(double[] angles) {
         double max = 0;
         for (int m = 0; m < 3; m++) {
@@ -72,5 +75,28 @@ public class BasicRules extends Activity {
         return max;
     }
 
+    // only acceleration
+    public void ruleFour() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (InTransitActivity.getAccel() > 97) {
+                    InTransitActivity.setPlace(30);
+                }
+            }
+        });
+    }
 
+    // engine speed/steering angle/throttle more complex stuff
+    public void ruleFive() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (InTransitActivity.getEng() > 3000 && (InTransitActivity.getSWAngle() > 60 ||
+                        InTransitActivity.getSWAngle() < -60) && InTransitActivity.getAccel() > 5) {
+                    InTransitActivity.setPlace(100);
+                }
+            }
+        });
+    }
 }

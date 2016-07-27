@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.icu.util.Measure;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -14,12 +15,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.openxc.VehicleManager;
+import com.openxc.measurements.AcceleratorPedalPosition;
 import com.openxc.measurements.EngineSpeed;
 import com.openxc.measurements.Measurement;
 import com.openxc.measurements.SteeringWheelAngle;
 import com.openxc.measurements.VehicleSpeed;
 import com.openxc.measurements.Latitude;
 import com.openxc.measurements.Longitude;
+
+import junit.framework.Test;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -39,6 +43,7 @@ public class InTransitActivity extends Activity {
     private static EngineSpeed engSpeed;
     private static VehicleSpeed vehSpeed;
     private static SteeringWheelAngle swAngle;
+    private static AcceleratorPedalPosition accelPosition;
     private static double lat;
     private static double lng;
 
@@ -48,8 +53,11 @@ public class InTransitActivity extends Activity {
     private ArrayList<Double> ruleLat = new ArrayList<>();
     private ArrayList<Double> ruleLong = new ArrayList<>();
 
-    // rules
+    // misc
     private BasicRules standardRules = new BasicRules();
+    Timer myTimer = new Timer();
+    public Button TestButton;
+    public Button MapReviewButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +69,6 @@ public class InTransitActivity extends Activity {
          mBackground = (TextView)findViewById(R.id.fullscreen_content);
 
         // constantly changing from red to green
-        Timer myTimer = new Timer();
         myTimer.schedule(new TimerTask()
         {
             @Override
@@ -72,33 +79,16 @@ public class InTransitActivity extends Activity {
         }, 0, 500);
 
 
-        // buttons
+        // button scripts
         goToReview();
         testRule();
-        //    getLocation();
-        /*if (engSpeed != null) {
-            BasicRules.ruleOne();
-        }*/
+        getLocation();
     }
-
 
     @Override
     public void onPause() {
         super.onPause();
-        if(mVehicleManager != null) {
-            Log.i(TAG, "Unbinding from Vehicle Manager");
-            mVehicleManager.removeListener(EngineSpeed.class,
-                    mEngineSpeedListener);
-            mVehicleManager.removeListener(VehicleSpeed.class,
-                    mVSpeedListener);
-            mVehicleManager.removeListener(SteeringWheelAngle.class,
-                    mWheelAngleListener);
-            mVehicleManager.removeListener(Latitude.class, mLatListener);
-            mVehicleManager.removeListener(Longitude.class, mLongListener);
-
-            unbindService(mConnection);
-            mVehicleManager = null;
-        }
+        stopEverything();
     }
 
     @Override
@@ -117,6 +107,8 @@ public class InTransitActivity extends Activity {
             InTransitActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     engSpeed = speed;
+                    standardRules.ruleOne();
+                    standardRules.ruleFive();
                 }
             });
         }
@@ -130,6 +122,7 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     vehSpeed = speed;
+                    standardRules.ruleTwo();
                 }
             });
         }
@@ -143,10 +136,25 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     swAngle = angle;
+                    standardRules.ruleThree();
                 }
             });
         }
     };
+
+    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
+        @Override
+        public void receive(Measurement measurement) {
+            final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
+            InTransitActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    accelPosition = position;
+                    standardRules.ruleFour();
+                }
+            });
+        }
+     };
 
     Latitude.Listener mLatListener = new Latitude.Listener(){
         @Override
@@ -187,13 +195,16 @@ public class InTransitActivity extends Activity {
             mVehicleManager.addListener(EngineSpeed.class, mEngineSpeedListener);
             mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
             mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
+            mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
             mVehicleManager.addListener(Latitude.class, mLatListener);
             mVehicleManager.addListener(Longitude.class, mLongListener);
+            System.out.println("after adding listeners");
         }
 
         public void onServiceDisconnected(ComponentName className) {
             Log.w(TAG, "VehicleManager Service  disconnected unexpectedly");
             mVehicleManager = null;
+            myTimer.cancel();
         }
     };
 
@@ -225,27 +236,17 @@ public class InTransitActivity extends Activity {
         });
     }
 
-
-    // moved to BasicRules class
-    /*public void rule()
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (engSpeed.getValue().doubleValue() > 1000) {
-                    place = place + 60;
-                }
-            }
-        });
-    }*/
-
-    public Button MapReviewButton;
     public void goToReview() {
         MapReviewButton = (Button)findViewById(R.id.stop_button);
 
         MapReviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+
+                // removes all the listeners, stops the scripts, etc
+                stopEverything();
+
+                // transfers the map data
                 Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity.class);
 
                 transferMapData.putExtra("latitude", totalLat);
@@ -259,7 +260,6 @@ public class InTransitActivity extends Activity {
         });
     }
 
-    public Button TestButton;
     public void testRule() {
         TestButton = (Button)findViewById(R.id.test_Button);
 
@@ -274,23 +274,47 @@ public class InTransitActivity extends Activity {
         });
     }
 
-    /*public void getLocation() {
+    public void getLocation() {
         totalLat.add(lat);
         totalLong.add(lng);
-    }*/
+    }
 
 
     // getters and setters
-    public static double getEng () {
-        return engSpeed.getValue().doubleValue();
-    }
+    public static double getEng () { return engSpeed.getValue().doubleValue();}
 
     public static double getVeh () { return vehSpeed.getValue().doubleValue();}
 
     public static double getSWAngle () { return swAngle.getValue().doubleValue();}
 
-    public static void setPlace(int newPlace) {
-        place = place + newPlace;
+    public static double getAccel () { return accelPosition.getValue().doubleValue();}
+
+    public static void setPlace(int newPlace) { place = place + newPlace;}
+
+
+
+    private void stopEverything() {
+        // stops VehicleManager Listeners
+        if(mVehicleManager != null) {
+            Log.i(TAG, "Unbinding from Vehicle Manager");
+            mVehicleManager.removeListener(EngineSpeed.class,
+                    mEngineSpeedListener);
+            mVehicleManager.removeListener(VehicleSpeed.class,
+                    mVSpeedListener);
+            mVehicleManager.removeListener(SteeringWheelAngle.class,
+                    mWheelAngleListener);
+            mVehicleManager.removeListener(AcceleratorPedalPosition.class,
+                    mAccelListener);
+            mVehicleManager.removeListener(Latitude.class, mLatListener);
+            mVehicleManager.removeListener(Longitude.class, mLongListener);
+
+            unbindService(mConnection);
+            mVehicleManager = null;
+        }
+        // stops timer script
+        myTimer.cancel();
+        TestButton.setOnClickListener(null);
     }
+
 
 }
