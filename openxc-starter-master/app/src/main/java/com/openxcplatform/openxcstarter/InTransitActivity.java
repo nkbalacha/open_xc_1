@@ -108,7 +108,7 @@ public class InTransitActivity extends Activity {
                 public void run() {
                     engSpeed = speed;
                     standardRules.ruleMaxEngSpd();
-                    standardRules.ruleFive();
+                    standardRules.ruleSpeedSteering();
                 }
             });
         }
@@ -122,7 +122,7 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     vehSpeed = speed;
-                    standardRules.ruleTwo();
+                    standardRules.ruleMaxVehSpd();
                 }
             });
         }
@@ -136,7 +136,7 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     swAngle = angle;
-                    standardRules.ruleThree();
+                    standardRules.ruleSteering();
                 }
             });
         }
