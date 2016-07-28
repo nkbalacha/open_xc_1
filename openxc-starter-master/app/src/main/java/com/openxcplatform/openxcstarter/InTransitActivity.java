@@ -107,7 +107,7 @@ public class InTransitActivity extends Activity {
             InTransitActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     engSpeed = speed;
-                    standardRules.ruleOne();
+                    standardRules.ruleMaxEngSpd();
                     standardRules.ruleFive();
                 }
             });
@@ -150,7 +150,7 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     accelPosition = position;
-                    standardRules.ruleFour();
+                    standardRules.ruleMaxAccel();
                 }
             });
         }
