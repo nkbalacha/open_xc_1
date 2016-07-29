@@ -47,6 +47,7 @@ public class InTransitActivity extends Activity {
     private static double lat;
     private static double lng;
 
+    //TODO-spencer: just testing this out
     // map coordinates
     private ArrayList<Double> totalLat = new ArrayList<>();
     private ArrayList<Double> totalLong = new ArrayList<>();
@@ -108,13 +109,13 @@ public class InTransitActivity extends Activity {
                 public void run() {
                     engSpeed = speed;
                     standardRules.ruleMaxEngSpd();
-                    standardRules.ruleSpeedSteering();
+//                    standardRules.ruleSpeedSteering();
                 }
             });
         }
     };
 
-    VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
+    /*VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         @Override
         public void receive(Measurement measurement) {
             final VehicleSpeed speed = (VehicleSpeed) measurement;
@@ -126,9 +127,9 @@ public class InTransitActivity extends Activity {
                 }
             });
         }
-    };
+    };*/
 
-    SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
+    /*SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         @Override
         public void receive(Measurement measurement) {
             final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
@@ -140,9 +141,9 @@ public class InTransitActivity extends Activity {
                 }
             });
         }
-    };
+    };*/
 
-    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
+    /*AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
         @Override
         public void receive(Measurement measurement) {
             final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
@@ -154,7 +155,7 @@ public class InTransitActivity extends Activity {
                 }
             });
         }
-     };
+     };*/
 
     Latitude.Listener mLatListener = new Latitude.Listener(){
         @Override
