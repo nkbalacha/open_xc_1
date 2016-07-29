@@ -65,7 +65,7 @@ public class InTransitActivity extends Activity {
 
         setContentView(R.layout.activity_in_transit);
 
-        // This is no longer necessary
+        // TODO: This is no longer necessary
          mBackground = (TextView)findViewById(R.id.fullscreen_content);
 
         // constantly changing from red to green
@@ -236,6 +236,11 @@ public class InTransitActivity extends Activity {
         });
     }
 
+    /** Activates a listener for when the "stop trip" button is pressed. At that point in time,
+     * the listeners and scripts on this activity are stopped, and the app will proceed to the
+     * map activity page.
+     *
+      */
     public void goToReview() {
         MapReviewButton = (Button)findViewById(R.id.stop_button);
 
