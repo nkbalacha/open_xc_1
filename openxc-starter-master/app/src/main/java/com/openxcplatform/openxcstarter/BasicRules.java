@@ -30,8 +30,9 @@ public class BasicRules extends Activity {
             public void run() {
                 if (InTransitActivity.getEng() > 4000) {
                     InTransitActivity.setPlace(40);
+                    System.out.println("RPM has exceeded 4000!");
                 } else {
-                    System.out.println("running ruleOne");
+                    System.out.println("running max RPM rule.");
                 }
             }
         });

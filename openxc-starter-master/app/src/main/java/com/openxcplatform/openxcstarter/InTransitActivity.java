@@ -194,9 +194,9 @@ public class InTransitActivity extends Activity {
                     .getService();
 
             mVehicleManager.addListener(EngineSpeed.class, mEngineSpeedListener);
-            mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
-            mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
-            mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
+//            mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
+//            mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
+//            mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
             mVehicleManager.addListener(Latitude.class, mLatListener);
             mVehicleManager.addListener(Longitude.class, mLongListener);
             System.out.println("after adding listeners");
@@ -305,12 +305,12 @@ public class InTransitActivity extends Activity {
             Log.i(TAG, "Unbinding from Vehicle Manager");
             mVehicleManager.removeListener(EngineSpeed.class,
                     mEngineSpeedListener);
-            mVehicleManager.removeListener(VehicleSpeed.class,
-                    mVSpeedListener);
-            mVehicleManager.removeListener(SteeringWheelAngle.class,
-                    mWheelAngleListener);
-            mVehicleManager.removeListener(AcceleratorPedalPosition.class,
-                    mAccelListener);
+//            mVehicleManager.removeListener(VehicleSpeed.class,
+//                    mVSpeedListener);
+//            mVehicleManager.removeListener(SteeringWheelAngle.class,
+//                    mWheelAngleListener);
+//            mVehicleManager.removeListener(AcceleratorPedalPosition.class,
+//                    mAccelListener);
             mVehicleManager.removeListener(Latitude.class, mLatListener);
             mVehicleManager.removeListener(Longitude.class, mLongListener);
 
