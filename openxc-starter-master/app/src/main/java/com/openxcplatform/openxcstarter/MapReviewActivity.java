@@ -34,30 +34,26 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        Intent receiveMapData = this.getIntent();
-        tLat = (ArrayList<Double>)getIntent().getSerializableExtra("latitude");
-        tLong = (ArrayList<Double>)getIntent().getSerializableExtra("longitude");
-        tRuleLat = (ArrayList<Double>)getIntent().getSerializableExtra("ruleLatitude");
-        tRuleLong = (ArrayList<Double>)getIntent().getSerializableExtra("ruleLongitude");
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        tLat = (ArrayList<Double>)getIntent().getSerializableExtra("latitude");
+        tLong = (ArrayList<Double>)getIntent().getSerializableExtra("longitude");
+        tRuleLat = (ArrayList<Double>)getIntent().getSerializableExtra("ruleLatitude");
+        tRuleLong = (ArrayList<Double>)getIntent().getSerializableExtra("ruleLongitude");
+
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-        Location location = locationManager.getLastKnownLocation(locationManager
-                .getBestProvider(criteria, false));
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Start"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 16));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(tLat.get(tLat.size() - 1),
+                tLong.get(tLong.size() - 1))).title("Start"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tLat.get(tLat.size() - 1),
+                tLong.get(tLong.size() - 1)), 16));
 
         for(int i = 0; i < tLat.size() - 1; i++) {
             mMap.addPolyline(new PolylineOptions().geodesic(true)
@@ -67,10 +63,10 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
 
         }
 
-        for(int i = 0; i < tRuleLat.size() - 1; i++) {
+        /*for(int i = 0; i < tRuleLat.size() - 1; i++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i))).title("broken rule"));
-        }
+        }*/
         System.out.println("Latitudes: " + tRuleLat);
         System.out.println("Longitude: " + tRuleLong);
     }

@@ -82,7 +82,7 @@ public class InTransitActivity extends Activity {
         // button scripts
         goToReview();
         testRule();
-        getLocation();
+    //    getLocation();
     }
 
     @Override
@@ -247,6 +247,16 @@ public class InTransitActivity extends Activity {
         MapReviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                //test coordinates
+                /*totalLat.add(-34.0);
+                totalLat.add(-18.0);
+                totalLat.add(21.0);
+                totalLat.add(37.0);
+                totalLong.add(151.2);
+                totalLong.add(178.43);
+                totalLong.add(-157.82);
+                totalLong.add(-122.1);*/
+
 
                 // removes all the listeners, stops the scripts, etc
                 stopEverything();
@@ -256,11 +266,10 @@ public class InTransitActivity extends Activity {
 
                 transferMapData.putExtra("latitude", totalLat);
                 transferMapData.putExtra("longitude", totalLong);
-                transferMapData.putExtra("ruleLatitude", ruleLat);
-                transferMapData.putExtra("ruleLongitude", ruleLong);
+         //       transferMapData.putExtra("ruleLatitude", ruleLat);
+         //       transferMapData.putExtra("ruleLongitude", ruleLong);
 
                 startActivity(transferMapData);
-
             }
         });
     }
@@ -279,10 +288,10 @@ public class InTransitActivity extends Activity {
         });
     }
 
-    public void getLocation() {
+    /*public void getLocation() {
         totalLat.add(lat);
         totalLong.add(lng);
-    }
+    }*/
 
 
     // getters and setters
@@ -320,6 +329,4 @@ public class InTransitActivity extends Activity {
         myTimer.cancel();
         TestButton.setOnClickListener(null);
     }
-
-
 }
