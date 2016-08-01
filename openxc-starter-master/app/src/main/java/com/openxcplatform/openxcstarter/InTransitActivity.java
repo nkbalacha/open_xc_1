@@ -109,6 +109,7 @@ public class InTransitActivity extends Activity {
                 public void run() {
                     engSpeed = speed;
                     standardRules.ruleMaxEngSpd();
+                    System.out.println(System.currentTimeMillis());
 //                    standardRules.ruleSpeedSteering();
                 }
             });
