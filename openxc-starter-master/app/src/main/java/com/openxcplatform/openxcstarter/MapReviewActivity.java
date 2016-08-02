@@ -49,18 +49,20 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
+        if (tLat.size() == 0 || tLong.size() == 0) {
+            // do nothing
+        } else {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(tLat.get(tLat.size() - 1),
+                    tLong.get(tLong.size() - 1))).title("Start"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tLat.get(tLat.size() - 1),
+                    tLong.get(tLong.size() - 1)), 16));
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(tLat.get(tLat.size() - 1),
-                tLong.get(tLong.size() - 1))).title("Start"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tLat.get(tLat.size() - 1),
-                tLong.get(tLong.size() - 1)), 16));
-
-        for(int i = 0; i < tLat.size() - 1; i++) {
-            mMap.addPolyline(new PolylineOptions().geodesic(true)
-                    .add(new LatLng(tLat.get(i), tLong.get(i)))
-                    .add(new LatLng(tLat.get(i + 1), tLong.get(i + 1)))
-            );
-
+            for(int i = 0; i < tLat.size() - 1; i++) {
+                mMap.addPolyline(new PolylineOptions().geodesic(true)
+                        .add(new LatLng(tLat.get(i), tLong.get(i)))
+                        .add(new LatLng(tLat.get(i + 1), tLong.get(i + 1)))
+                );
+            }
         }
 
         /*for(int i = 0; i < tRuleLat.size() - 1; i++) {

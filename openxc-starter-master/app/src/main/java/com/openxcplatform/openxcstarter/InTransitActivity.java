@@ -37,6 +37,7 @@ public class InTransitActivity extends Activity {
     private int red = 0;
     private int green = 255;
     private static int place = 0;
+    private boolean rulesChecked;
 
     // OpenXC data
     private VehicleManager mVehicleManager;
@@ -67,6 +68,11 @@ public class InTransitActivity extends Activity {
 
         // TODO: This is no longer necessary
          mBackground = (TextView)findViewById(R.id.fullscreen_content);
+
+        rulesChecked = RulesFragment.getRulesChecked();
+
+        // test for switch in RulesFragment
+        System.out.println(rulesChecked);
 
         // constantly changing from red to green
         myTimer.schedule(new TimerTask()
@@ -220,9 +226,9 @@ public class InTransitActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (place == 0) {
-                    mBackground.setBackgroundResource(R.drawable.happy_driving);
-                } else {
+                //if (place == 0) {
+                //    mBackground.setBackgroundResource(R.drawable.happy_driving);
+                //} else {
                     if (place > 0 && place < 256) {
                         place--;
                     }
@@ -230,8 +236,8 @@ public class InTransitActivity extends Activity {
                         place = 255;
                     }
                     mBackground.setBackgroundColor(Color.argb(255, red + place, green - place, 0));
-                    System.out.println(place);
-                }
+                   // System.out.println(place);  test to check the color
+    //            }
             }
         });
     }

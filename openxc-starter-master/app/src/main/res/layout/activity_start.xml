@@ -4,12 +4,16 @@
     android:id="@+id/drawer_layout"
     android:layout_alignParentTop="true"
     android:layout_centerHorizontal="true"
+    android:background="#101118"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- we're going with this color palette for now: http://colorpalettes.net/color-palette-2924/ -->
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/home_background"
         android:id="@+id/relativeLayout" >
 
 
@@ -32,7 +36,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:id="@+id/listview"
-            android:background="@color/accent_material_light">
+            android:background="#787fa0" >
         </ListView>
 
 </android.support.v4.widget.DrawerLayout>

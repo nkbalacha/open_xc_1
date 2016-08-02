@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_profile"
+    android:id="@+id/fragment_my_trips"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#c1c5d6" >

@@ -24,10 +24,10 @@ public class StartActivity extends AppCompatActivity {
 
     ListView listView;
     ArrayAdapter<String> listAdapter;
-    String fragmentArray[] = {"Profile", "Rules"};
+    String fragmentArray[] = {"Profile", "Custom Rules", "My Trips", "Stats"};
     DrawerLayout myDL;
 
-    private static final String TAG = "StartActivity";
+    private static final String TAG = "WE NEED A NAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,12 @@ public class StartActivity extends AppCompatActivity {
                         break;
                     case 1:
                         fragment = new RulesFragment();
+                        break;
+                    case 2:
+                        fragment = new MyTripsFragment();
+                        break;
+                    case 3:
+                        fragment = new StatsFragment();
                         break;
                     default:
                         fragment = new ProfileFragment();
