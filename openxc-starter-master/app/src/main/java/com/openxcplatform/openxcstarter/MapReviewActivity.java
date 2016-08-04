@@ -53,7 +53,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             // do nothing
         } else {
             mMap.addMarker(new MarkerOptions().position(new LatLng(tLat.get(tLat.size() - 1),
-                    tLong.get(tLong.size() - 1))).title("Start"));
+                    tLong.get(tLong.size() - 1))).title("End of trip"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tLat.get(tLat.size() - 1),
                     tLong.get(tLong.size() - 1)), 16));
 

@@ -48,8 +48,8 @@ public class InTransitActivity extends Activity {
     // map coordinates
     private ArrayList<Double> totalLat = new ArrayList<>();
     private ArrayList<Double> totalLong = new ArrayList<>();
-    private ArrayList<Double> ruleLat = new ArrayList<>();
-    private ArrayList<Double> ruleLong = new ArrayList<>();
+    private static ArrayList<Double> ruleLat = new ArrayList<>();
+    private static ArrayList<Double> ruleLong = new ArrayList<>();
 
     // misc
     private BasicRules standardRules = new BasicRules();
@@ -294,7 +294,11 @@ public class InTransitActivity extends Activity {
 
     public static double getAccel () { return accelPosition.getValue().doubleValue();}
 
-    public static void setPlace(int newPlace) { place = place + newPlace;}
+    public static void setPlace(int newPlace) {
+        place = place + newPlace;
+        ruleLat.add(lat);
+        ruleLong.add(lng);
+    }
 
     private void stopEverything() {
         // stops VehicleManager Listeners
