@@ -42,42 +42,20 @@ public class BasicRules extends Activity {
     /**
      * Enforces that the driver should not rotate the steering wheel by 90 degrees or more during
      * any period of 0.5 seconds.
-     */
-    /*public void ruleSteering() {
-        angleQueue = new double[4];
-        Timer myTimer = new Timer();
-        myTimer.schedule(new TimerTask() {
-            int i = 0;
-
-            @Override
-            public void run() {
-                angleQueue[i] = InTransitActivity.getSWAngle();
-                i = (i + 1) % 4;
-                if (angleQueue.length == 4) {
-                    if (limit(angleQueue) > 90) {
-                        InTransitActivity.setPlace(30);
-                    }
-                }
-            }
-        }, 0, 62);
-    }*/
-
-    /**
-     * Helper for ruleSteering()
      *
-     * @param angles a queue of steering angle values
-     * @return  the maximum angle difference during this time period
+     * This is a rudimentary algorithm. The rule is called slightly less than 10 times a second
+     * (on average 108 millisec between calls), so we will keep a queue of 10 values.
+     * After each call, the oldest value is discarded, and the newly measured steering angle
+     * value is added to the queue.
+     *
+     * Then the maximum and minimum are calculated, and we check if there is a difference of 90
+     * degrees or greater.
      */
-    public double limit(double[] angles) {
-        double max = 0;
-        for (int m = 0; m < 3; m++) {
-            for (int n = m + 1; n < 4; n++) {
-                if (Math.abs(angles[m] - angles[n]) > max) {
-                    max = Math.abs(angles[m] - angles[n]);
-                }
-            }
-        }
-        return max;
+    public void ruleSteering() {
+        // the mod is used to just take the last 4 digits of the execution time, for convenience
+//        System.out.println(System.currentTimeMillis() % 10000);
+
+
     }
 
     /**

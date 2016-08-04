@@ -164,7 +164,7 @@ public class InTransitActivity extends Activity {
         public void receive(Measurement measurement) {
             final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
                     swAngle = angle;
-//                    standardRules.ruleSteering();
+                    standardRules.ruleSteering();
                 }
     };
 
