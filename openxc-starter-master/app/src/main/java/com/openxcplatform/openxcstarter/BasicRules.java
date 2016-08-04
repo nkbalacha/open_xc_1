@@ -1,7 +1,6 @@
 package com.openxcplatform.openxcstarter;
 
 import android.app.Activity;
-import android.test.InstrumentationTestRunner;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,23 +17,15 @@ public class BasicRules extends Activity {
 		 * BasicRules inside the onCreate method of InTransit activity, which would
 		 * start the thread.
 		 */
-
     }
 
     /**
      * Enforces the maximum engine speed to be 4000 RPM.
      */
     public void ruleMaxEngSpd() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
                 if (InTransitActivity.getEng() > 4000) {
                     InTransitActivity.setPlace(40);
-                } else {
-                    System.out.println("running ruleOne");
                 }
-            }
-        });
     }
 
     //TODO vehicle speed units are km/hr, right?
@@ -43,14 +34,9 @@ public class BasicRules extends Activity {
      * Enforce the maximum vehicle speed as 90 km/hr.
      */
     public void ruleMaxVehSpd() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
                 if (InTransitActivity.getVeh() > 90) {
                     InTransitActivity.setPlace(80);
                 }
-            }
-        });
     }
 
     /**
@@ -98,14 +84,9 @@ public class BasicRules extends Activity {
      * Limits the maximum acceleration pedal value to 97.
      */
     public void ruleMaxAccel() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
                 if (InTransitActivity.getAccel() > 97) {
                     InTransitActivity.setPlace(30);
                 }
-            }
-        });
     }
 
     /**
@@ -114,16 +95,11 @@ public class BasicRules extends Activity {
      * in either direction, the driver has committed a violation.
      */
     public void ruleSpeedSteering() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
                 if (InTransitActivity.getEng() > 3000
                         && (InTransitActivity.getSWAngle() > 60 || InTransitActivity
                         .getSWAngle() < -60)
                         && InTransitActivity.getAccel() > 5) {
                     InTransitActivity.setPlace(100);
                 }
-            }
-        });
     }
 }

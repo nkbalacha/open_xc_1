@@ -23,8 +23,6 @@ import com.openxc.measurements.VehicleSpeed;
 import com.openxc.measurements.Latitude;
 import com.openxc.measurements.Longitude;
 
-import junit.framework.Test;
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +35,6 @@ public class InTransitActivity extends Activity {
     private int red = 0;
     private int green = 255;
     private static int place = 0;
-    private boolean rulesChecked;
 
     // OpenXC data
     private VehicleManager mVehicleManager;
@@ -56,9 +53,11 @@ public class InTransitActivity extends Activity {
 
     // misc
     private BasicRules standardRules = new BasicRules();
+    private CustomRules newRules = new CustomRules();
     Timer myTimer = new Timer();
-    public Button TestButton;
+    public Button TestButton;    //remove in final presentation
     public Button MapReviewButton;
+    private boolean rulesChecked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +66,12 @@ public class InTransitActivity extends Activity {
         setContentView(R.layout.activity_in_transit);
 
         // TODO: This is no longer necessary
-         mBackground = (TextView)findViewById(R.id.fullscreen_content);
+         mBackground = (TextView)findViewById(R.id.fullscreen_content); //we can remove this
 
-        rulesChecked = RulesFragment.getRulesChecked();
+        rulesChecked = RulesFragment.getRulesChecked(); //custom rules or no
 
         // test for switch in RulesFragment
-        System.out.println(rulesChecked);
+        System.out.println(rulesChecked); //it works
 
         // constantly changing from red to green
         myTimer.schedule(new TimerTask()
@@ -89,12 +88,29 @@ public class InTransitActivity extends Activity {
         goToReview();
         testRule();
     //    getLocation();
+
+        /*
+        Ideally we'd have something here that initializes a ruleset and then runs it throughout the
+        activity. Currently it fails because the listeners are called after the stuff here begins.
+         */
+        /*if (rulesChecked = true) {
+            new ruleSet = new CustomRules();
+        } else {
+            new ruleSet = new BasicRules();
+        }*/
+
+        /*
+        some more ideas: we could turn "rules" into an interface and have basic/custom rules extend
+        that interface. That should let us use the same methods to call both by just initializing
+        them as different objects.
+         */
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopEverything();
+        stopEverything();  //unbinds everything
     }
 
     @Override
@@ -106,20 +122,6 @@ public class InTransitActivity extends Activity {
         }
     }
 
-    EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
-        @Override
-        public void receive(Measurement measurement) {
-            final EngineSpeed speed = (EngineSpeed) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    engSpeed = speed;
-                    standardRules.ruleMaxEngSpd();
-                    standardRules.ruleSpeedSteering();
-                }
-            });
-        }
-    };
-
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         @Override
         public void receive(Measurement measurement) {
@@ -128,11 +130,51 @@ public class InTransitActivity extends Activity {
                 @Override
                 public void run() {
                     vehSpeed = speed;
-                    standardRules.ruleMaxVehSpd();
+                    if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
+                        newRules.customMaxVehSpd(RulesFragment.getvSMax());
+                    } else {
+                        standardRules.ruleMaxVehSpd();
+                    }
                 }
             });
         }
     };
+
+    EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
+        @Override
+        public void receive(Measurement measurement) {
+            final EngineSpeed speed = (EngineSpeed) measurement;
+            InTransitActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    engSpeed = speed;
+                    if (rulesChecked = true && RulesFragment.getEngMax() != 0) {
+                        newRules.customMaxEngSpd(RulesFragment.getEngMax());
+                    } else {
+                        standardRules.ruleMaxEngSpd();
+                        standardRules.ruleSpeedSteering();
+                    }
+                }
+            });
+        }
+    };
+
+    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
+        @Override
+        public void receive(Measurement measurement) {
+            final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
+            InTransitActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    accelPosition = position;
+                    if (rulesChecked = true && RulesFragment.getAccelMax() != 0) {
+                        newRules.customMaxAccel(RulesFragment.getAccelMax());
+                    } else {
+                        standardRules.ruleMaxAccel();
+                    }
+                }
+            });
+        }
+     };
 
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         @Override
@@ -147,20 +189,6 @@ public class InTransitActivity extends Activity {
             });
         }
     };
-
-    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
-        @Override
-        public void receive(Measurement measurement) {
-            final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    accelPosition = position;
-                    standardRules.ruleMaxAccel();
-                }
-            });
-        }
-     };
 
     Latitude.Listener mLatListener = new Latitude.Listener(){
         @Override
@@ -294,6 +322,7 @@ public class InTransitActivity extends Activity {
         });
     }
 
+    //done inside the listeners now
     /*public void getLocation() {
         totalLat.add(lat);
         totalLong.add(lng);
@@ -310,8 +339,6 @@ public class InTransitActivity extends Activity {
     public static double getAccel () { return accelPosition.getValue().doubleValue();}
 
     public static void setPlace(int newPlace) { place = place + newPlace;}
-
-
 
     private void stopEverything() {
         // stops VehicleManager Listeners
