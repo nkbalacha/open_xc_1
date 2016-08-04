@@ -123,29 +123,20 @@ public class InTransitActivity extends Activity {
     }
 
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
-        @Override
         public void receive(Measurement measurement) {
             final VehicleSpeed speed = (VehicleSpeed) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
                     vehSpeed = speed;
                     if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
                         newRules.customMaxVehSpd(RulesFragment.getvSMax());
                     } else {
                         standardRules.ruleMaxVehSpd();
                     }
-                }
-            });
         }
     };
 
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
-        @Override
         public void receive(Measurement measurement) {
             final EngineSpeed speed = (EngineSpeed) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
                     engSpeed = speed;
                     if (rulesChecked = true && RulesFragment.getEngMax() != 0) {
                         newRules.customMaxEngSpd(RulesFragment.getEngMax());
@@ -153,69 +144,43 @@ public class InTransitActivity extends Activity {
                         standardRules.ruleMaxEngSpd();
                         standardRules.ruleSpeedSteering();
                     }
-                }
-            });
         }
     };
 
     AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
-        @Override
         public void receive(Measurement measurement) {
             final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
                     accelPosition = position;
                     if (rulesChecked = true && RulesFragment.getAccelMax() != 0) {
                         newRules.customMaxAccel(RulesFragment.getAccelMax());
                     } else {
                         standardRules.ruleMaxAccel();
                     }
-                }
-            });
         }
      };
 
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
-        @Override
         public void receive(Measurement measurement) {
             final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
                     swAngle = angle;
                     standardRules.ruleSteering();
                 }
-            });
-        }
     };
 
     Latitude.Listener mLatListener = new Latitude.Listener(){
-        @Override
         public void receive(Measurement measurement) {
             final Latitude lati = (Latitude) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
                     lat = lati.getValue().doubleValue();
                     totalLat.add(lat);
                 }
-            });
-        }
     };
 
     Longitude.Listener mLongListener = new Longitude.Listener() {
-        @Override
         public void receive(Measurement measurement) {
             final Longitude lg = (Longitude) measurement;
-            InTransitActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
                     lng = lg.getValue().doubleValue();
                     totalLong.add(lng);
                 }
-            });
-        }
     };
 
 
@@ -232,7 +197,7 @@ public class InTransitActivity extends Activity {
             mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
             mVehicleManager.addListener(Latitude.class, mLatListener);
             mVehicleManager.addListener(Longitude.class, mLongListener);
-            System.out.println("after adding listeners");
+        //    System.out.println("after adding listeners");
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -281,16 +246,6 @@ public class InTransitActivity extends Activity {
         MapReviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                //test coordinates
-                /*totalLat.add(-34.0);
-                totalLat.add(-18.0);
-                totalLat.add(21.0);
-                totalLat.add(37.0);
-                totalLong.add(151.2);
-                totalLong.add(178.43);
-                totalLong.add(-157.82);
-                totalLong.add(-122.1);*/
-
 
                 // removes all the listeners, stops the scripts, etc
                 stopEverything();
@@ -300,9 +255,10 @@ public class InTransitActivity extends Activity {
 
                 transferMapData.putExtra("latitude", totalLat);
                 transferMapData.putExtra("longitude", totalLong);
-         //       transferMapData.putExtra("ruleLatitude", ruleLat);
-         //       transferMapData.putExtra("ruleLongitude", ruleLong);
-
+                transferMapData.putExtra("ruleLatitude", ruleLat);
+                transferMapData.putExtra("ruleLongitude", ruleLong);
+         //       System.out.println("TotalLat: " + totalLat.toString());
+         //       System.out.println("TotalLong: " + totalLong.toString());
                 startActivity(transferMapData);
             }
         });

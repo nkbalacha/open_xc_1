@@ -65,11 +65,11 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
 
-        /*for(int i = 0; i < tRuleLat.size() - 1; i++) {
+        for(int i = 0; i < tRuleLat.size() - 1; i++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i))).title("broken rule"));
-        }*/
-        System.out.println("Latitudes: " + tRuleLat);
-        System.out.println("Longitude: " + tRuleLong);
+        }
+    //    System.out.println("Latitudes: " + tRuleLat);
+    //    System.out.println("Longitude: " + tRuleLong);
     }
 }
