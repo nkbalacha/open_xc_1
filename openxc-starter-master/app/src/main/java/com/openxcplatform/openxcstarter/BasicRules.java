@@ -43,7 +43,7 @@ public class BasicRules extends Activity {
      * Enforces that the driver should not rotate the steering wheel by 90 degrees or more during
      * any period of 0.5 seconds.
      */
-    public void ruleSteering() {
+    /*public void ruleSteering() {
         angleQueue = new double[4];
         Timer myTimer = new Timer();
         myTimer.schedule(new TimerTask() {
@@ -60,7 +60,7 @@ public class BasicRules extends Activity {
                 }
             }
         }, 0, 62);
-    }
+    }*/
 
     /**
      * Helper for ruleSteering()
