@@ -1,3 +1,9 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_stats"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#c1c5d6" >
+
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,3 +12,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.openxcplatform.openxcstarter.MapReviewActivity" />
+
+    <Button
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:onClick="back_to_home"
+        android:text="B"/>
+
+
+</RelativeLayout>

@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -71,5 +72,10 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         }*/
         System.out.println("Latitudes: " + tRuleLat);
         System.out.println("Longitude: " + tRuleLong);
+    }
+
+    public void back_to_home(View view){
+        Intent i= new Intent(this,StartActivity.class);
+        startActivity(i);
     }
 }
