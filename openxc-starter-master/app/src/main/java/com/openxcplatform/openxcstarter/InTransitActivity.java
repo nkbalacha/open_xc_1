@@ -122,6 +122,7 @@ public class InTransitActivity extends Activity {
         }
     }
 
+    //TODO: why do we use redundant variables for the listeners?
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             final VehicleSpeed speed = (VehicleSpeed) measurement;
