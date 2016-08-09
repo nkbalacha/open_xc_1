@@ -7,6 +7,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,6 +27,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private ArrayList<Double> tLong;
     private ArrayList<Double> tRuleLat;
     private ArrayList<Double> tRuleLong;
+    private Button homeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        goToHome();
     }
 
 
@@ -69,7 +73,20 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i))).title("broken rule"));
         }
-    //    System.out.println("Latitudes: " + tRuleLat);
-    //    System.out.println("Longitude: " + tRuleLong);
+        System.out.println("Latitudes: " + tRuleLat.toString());
+        System.out.println("Longitude: " + tRuleLong.toString());
+    }
+
+    public void goToHome() {
+        homeButton = (Button)findViewById(R.id.but_home);
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent changePage = new Intent(MapReviewActivity.this, StartActivity.class);
+
+                startActivity(changePage);
+            }
+        });
     }
 }

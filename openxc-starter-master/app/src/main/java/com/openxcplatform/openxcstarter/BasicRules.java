@@ -26,9 +26,8 @@ public class BasicRules extends Activity {
                 if (InTransitActivity.getEng() > 4000) {
                     InTransitActivity.setPlace(40);
                 }
+                System.out.println("running basic rules");
     }
-
-    //TODO vehicle speed units are km/hr, right?
 
     /**
      * Enforce the maximum vehicle speed as 90 km/hr.

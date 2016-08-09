@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.openxc.VehicleManager;
@@ -31,7 +32,7 @@ public class InTransitActivity extends Activity {
     private static final String TAG = "InTransitActivity";
 
     // so background starts at all green
-    private TextView mBackground;
+    private ImageView mBackground;
     private int red = 0;
     private int green = 255;
     private static int place = 0;
@@ -65,13 +66,9 @@ public class InTransitActivity extends Activity {
 
         setContentView(R.layout.activity_in_transit);
 
-        // TODO: This is no longer necessary
-         mBackground = (TextView)findViewById(R.id.fullscreen_content); //we can remove this
+         mBackground = (ImageView) findViewById(R.id.overlay_layer);
 
-        rulesChecked = RulesFragment.getRulesChecked(); //custom rules or no
-
-        // test for switch in RulesFragment
-        System.out.println(rulesChecked); //it works
+        rulesChecked = RulesFragment.getRulesChecked();
 
         // constantly changing from red to green
         myTimer.schedule(new TimerTask()
@@ -81,19 +78,17 @@ public class InTransitActivity extends Activity {
             {
                 redToGreen();
             }
-        }, 0, 500);
-
+        }, 0, 200);
 
         // button scripts
         goToReview();
         testRule();
-    //    getLocation();
 
         /*
         Ideally we'd have something here that initializes a ruleset and then runs it throughout the
         activity. Currently it fails because the listeners are called after the stuff here begins.
          */
-        /*if (rulesChecked = true) {
+        /*if (rulesChecked == true) {
             new ruleSet = new CustomRules();
         } else {
             new ruleSet = new BasicRules();
@@ -122,66 +117,61 @@ public class InTransitActivity extends Activity {
         }
     }
 
-    //TODO: why do we use redundant variables for the listeners?
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
-            final VehicleSpeed speed = (VehicleSpeed) measurement;
-                    vehSpeed = speed;
-                    if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
-                        newRules.customMaxVehSpd(RulesFragment.getvSMax());
-                    } else {
-                        standardRules.ruleMaxVehSpd();
-                    }
+            vehSpeed = (VehicleSpeed) measurement;
+            if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
+                newRules.customMaxVehSpd(RulesFragment.getvSMax());
+            } else {
+                standardRules.ruleMaxVehSpd();
+            }
         }
     };
 
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
-            final EngineSpeed speed = (EngineSpeed) measurement;
-                    engSpeed = speed;
-                    if (rulesChecked = true && RulesFragment.getEngMax() != 0) {
-                        newRules.customMaxEngSpd(RulesFragment.getEngMax());
-                    } else {
-                        standardRules.ruleMaxEngSpd();
-                        standardRules.ruleSpeedSteering();
-                    }
+            engSpeed = (EngineSpeed) measurement;
+            if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
+                newRules.customMaxEngSpd(RulesFragment.getEngMax());
+            } else {
+                standardRules.ruleMaxEngSpd();
+                standardRules.ruleSpeedSteering();
+            }
         }
     };
 
     AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
-            final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
-                    accelPosition = position;
-                    if (rulesChecked = true && RulesFragment.getAccelMax() != 0) {
-                        newRules.customMaxAccel(RulesFragment.getAccelMax());
-                    } else {
-                        standardRules.ruleMaxAccel();
-                    }
+            accelPosition = (AcceleratorPedalPosition) measurement;
+            if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
+                newRules.customMaxAccel(RulesFragment.getAccelMax());
+            } else {
+                standardRules.ruleMaxAccel();
+            }
         }
      };
 
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         public void receive(Measurement measurement) {
-            final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
-                    swAngle = angle;
-                    standardRules.ruleSteering();
-                }
+            swAngle = (SteeringWheelAngle) measurement;
+            standardRules.ruleSteering();
+        }
     };
 
     Latitude.Listener mLatListener = new Latitude.Listener(){
         public void receive(Measurement measurement) {
             final Latitude lati = (Latitude) measurement;
-                    lat = lati.getValue().doubleValue();
-                    totalLat.add(lat);
-                }
+            lat = lati.getValue().doubleValue();
+            totalLat.add(lat);
+        }
     };
 
     Longitude.Listener mLongListener = new Longitude.Listener() {
         public void receive(Measurement measurement) {
             final Longitude lg = (Longitude) measurement;
-                    lng = lg.getValue().doubleValue();
-                    totalLong.add(lng);
-                }
+            lng = lg.getValue().doubleValue();
+            totalLong.add(lng);
+        }
     };
 
 
@@ -198,7 +188,6 @@ public class InTransitActivity extends Activity {
             mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
             mVehicleManager.addListener(Latitude.class, mLatListener);
             mVehicleManager.addListener(Longitude.class, mLongListener);
-        //    System.out.println("after adding listeners");
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -207,7 +196,6 @@ public class InTransitActivity extends Activity {
             myTimer.cancel();
         }
     };
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -220,18 +208,36 @@ public class InTransitActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //if (place == 0) {
-                //    mBackground.setBackgroundResource(R.drawable.happy_driving);
-                //} else {
-                    if (place > 0 && place < 256) {
-                        place--;
-                    }
-                    if (place > 255) {
-                        place = 255;
-                    }
-                    mBackground.setBackgroundColor(Color.argb(255, red + place, green - place, 0));
-                   // System.out.println(place);  test to check the color
-    //            }
+                if (place > 204) {
+                    mBackground.setImageResource(R.drawable.scared_face);
+                }
+                if (place > 153 && place < 204) {
+                    mBackground.setImageResource(R.drawable.sad_face);
+                }
+                if (place > 102 && place < 153) {
+                    mBackground.setImageResource(R.drawable.neutral_face);
+                }
+                if (place > 51 && place < 102) {
+                    mBackground.setImageResource(R.drawable.smiling_face);
+                }
+                if (place < 51) {
+                    mBackground.setImageResource(R.drawable.happy_face);
+                }
+
+
+                if (place > 0 && place < 256) {
+                    place--;
+                }
+                if (place > 255) {
+                    place = 255;
+                }
+                if (place < 128) {
+                    mBackground.setBackgroundColor(Color.argb(255, place * 2, 255, 0));
+                }
+                if (place >= 128) {
+                    mBackground.setBackgroundColor(Color.argb(255, 255, 255 - 2*(place - 127), 0));
+                }
+                System.out.println(place);
             }
         });
     }
@@ -258,8 +264,6 @@ public class InTransitActivity extends Activity {
                 transferMapData.putExtra("longitude", totalLong);
                 transferMapData.putExtra("ruleLatitude", ruleLat);
                 transferMapData.putExtra("ruleLongitude", ruleLong);
-         //       System.out.println("TotalLat: " + totalLat.toString());
-         //       System.out.println("TotalLong: " + totalLong.toString());
                 startActivity(transferMapData);
             }
         });
@@ -278,13 +282,6 @@ public class InTransitActivity extends Activity {
             }
         });
     }
-
-    //done inside the listeners now
-    /*public void getLocation() {
-        totalLat.add(lat);
-        totalLong.add(lng);
-    }*/
-
 
     // getters and setters
     public static double getEng () { return engSpeed.getValue().doubleValue();}
