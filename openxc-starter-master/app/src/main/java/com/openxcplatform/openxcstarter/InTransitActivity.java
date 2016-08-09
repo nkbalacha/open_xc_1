@@ -28,6 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class InTransitActivity extends Activity {
+
     private static final String TAG = "InTransitActivity";
 
     // so background starts at all green
@@ -125,42 +126,47 @@ public class InTransitActivity extends Activity {
     }
 
     //TODO: why do we use redundant variables for the listeners?
-    VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
-        public void receive(Measurement measurement) {
-            final VehicleSpeed speed = (VehicleSpeed) measurement;
-            vehSpeed = speed;
-            if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
-                newRules.customMaxVehSpd(RulesFragment.getvSMax());
-            } else {
-                standardRules.ruleMaxVehSpd();
-            }
-        }
-    };
+//    VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
+//        public void receive(Measurement measurement) {
+//            final VehicleSpeed speed = (VehicleSpeed) measurement;
+//            vehSpeed = speed;
+//            if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
+//                newRules.customMaxVehSpd(RulesFragment.getvSMax());
+//            } else {
+//                standardRules.ruleMaxVehSpd();
+//            }
+//        }
+//    };
 
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
-            final EngineSpeed speed = (EngineSpeed) measurement;
-            engSpeed = speed;
-            if (rulesChecked = true && RulesFragment.getEngMax() != 0) {
+
+            //TODO: what is the point of defining a new variable 'speed'?
+//            final EngineSpeed speed = (EngineSpeed) measurement;
+            engSpeed = (EngineSpeed) measurement;
+
+            //TODO: Does this need to be checked on every single loop of the listener?
+            if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
                 newRules.customMaxEngSpd(RulesFragment.getEngMax());
             } else {
-                standardRules.ruleMaxEngSpd();
-                standardRules.ruleSpeedSteering();
+
+                setPlace(standardRules.ruleMaxEngSpd(getEng()));
+//                standardRules.ruleSpeedSteering();
             }
         }
     };
 
-    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
-        public void receive(Measurement measurement) {
-            final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
-            accelPosition = position;
-            if (rulesChecked = true && RulesFragment.getAccelMax() != 0) {
-                newRules.customMaxAccel(RulesFragment.getAccelMax());
-            } else {
-                standardRules.ruleMaxAccel();
-            }
-        }
-    };
+//    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
+//        public void receive(Measurement measurement) {
+//            final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
+//            accelPosition = position;
+//            if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
+//                newRules.customMaxAccel(RulesFragment.getAccelMax());
+//            } else {
+//                standardRules.ruleMaxAccel();
+//            }
+//        }
+//    };
 
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         public void receive(Measurement measurement) {
@@ -197,9 +203,9 @@ public class InTransitActivity extends Activity {
                     .getService();
 
             mVehicleManager.addListener(EngineSpeed.class, mEngineSpeedListener);
-            mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
+//            mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
             mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
-            mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
+//            mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
             mVehicleManager.addListener(Latitude.class, mLatListener);
             mVehicleManager.addListener(Longitude.class, mLongListener);
             //    System.out.println("after adding listeners");
@@ -314,14 +320,22 @@ public class InTransitActivity extends Activity {
      *
      * @param newPlace is the additional value to be added to <code>place</code>
      */
-    public static void setPlace(int newPlace) {
+    public void setPlace(int newPlace) {
         //TODO: I think we should change this from public to private (and just call it within
         // this class)
 
+        if (newPlace > 0){
+            ruleLat.add(lat);
+            ruleLong.add(lng);
+        }
 
         place = Math.min(place + newPlace, 255); // guarantees that place does not exceed 255
-        ruleLat.add(lat);
-        ruleLong.add(lng);
+        try {
+            wait(10000);
+        } catch (InterruptedException e) {
+            System.out.println("wait method inside setPlace() failed.");
+            e.printStackTrace();
+        }
     }
 
     private void stopEverything() {
@@ -330,12 +344,12 @@ public class InTransitActivity extends Activity {
             Log.i(TAG, "Unbinding from Vehicle Manager");
             mVehicleManager.removeListener(EngineSpeed.class,
                     mEngineSpeedListener);
-            mVehicleManager.removeListener(VehicleSpeed.class,
-                    mVSpeedListener);
+//            mVehicleManager.removeListener(VehicleSpeed.class,
+//                    mVSpeedListener);
             mVehicleManager.removeListener(SteeringWheelAngle.class,
                     mWheelAngleListener);
-            mVehicleManager.removeListener(AcceleratorPedalPosition.class,
-                    mAccelListener);
+//            mVehicleManager.removeListener(AcceleratorPedalPosition.class,
+//                    mAccelListener);
             mVehicleManager.removeListener(Latitude.class, mLatListener);
             mVehicleManager.removeListener(Longitude.class, mLongListener);
 

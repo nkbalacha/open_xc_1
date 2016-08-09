@@ -22,12 +22,16 @@ public class BasicRules extends Activity {
     }
 
     /**
-     * Enforces the maximum engine speed to be 4000 RPM.
+     * Enforces the maximum engine speed as 4000 RPM.
      */
-    public void ruleMaxEngSpd() {
-                if (InTransitActivity.getEng() > 4000) {
-                    InTransitActivity.setPlace(40);
-                }
+    public int ruleMaxEngSpd(double newSpd) {
+
+        System.out.println("RPM  ---  " + newSpd);
+        /*
+        if rpm is over 4000, return 40 for place addition, otherwise return 0.
+         */
+        if (newSpd > 4000) return 40;
+        return 0;
     }
 
     //TODO vehicle speed units are km/hr, right?
@@ -35,11 +39,11 @@ public class BasicRules extends Activity {
     /**
      * Enforce the maximum vehicle speed as 90 km/hr.
      */
-    public void ruleMaxVehSpd() {
-                if (InTransitActivity.getVeh() > 90) {
-                    InTransitActivity.setPlace(80);
-                }
-    }
+//    public void ruleMaxVehSpd() {
+//                if (InTransitActivity.getVeh() > 90) {
+//                    InTransitActivity.setPlace(80);
+//                }
+//    }
 
     /**
      * Enforces that the driver should not rotate the steering wheel by 90 degrees or more during
@@ -88,7 +92,7 @@ public class BasicRules extends Activity {
             if (val > maxAngle) maxAngle = val;
         }
 
-        System.out.println(maxAngle - minAngle);
+        System.out.println("Steering  ---  "+(maxAngle - minAngle));
 
         /*
         if angle difference is 90 or greater, clear the queue, and return the severity value
@@ -104,23 +108,23 @@ public class BasicRules extends Activity {
     /**
      * Limits the maximum acceleration pedal value to 97.
      */
-    public void ruleMaxAccel() {
-                if (InTransitActivity.getAccel() > 97) {
-                    InTransitActivity.setPlace(30);
-                }
-    }
+//    public void ruleMaxAccel() {
+//                if (InTransitActivity.getAccel() > 97) {
+//                    InTransitActivity.setPlace(30);
+//                }
+//    }
 
     /**
      * Enforces this situation: if the engine speed is above 3000 RPM, and the accelerator pedal
      * is pressed in at least 5%, and the steering wheel is rotated at least 60 deg from center
      * in either direction, the driver has committed a violation.
      */
-    public void ruleSpeedSteering() {
-                if (InTransitActivity.getEng() > 3000
-                        && (InTransitActivity.getSWAngle() > 60 || InTransitActivity
-                        .getSWAngle() < -60)
-                        && InTransitActivity.getAccel() > 5) {
-                    InTransitActivity.setPlace(100);
-                }
-    }
+//    public void ruleSpeedSteering() {
+//                if (InTransitActivity.getEng() > 3000
+//                        && (InTransitActivity.getSWAngle() > 60 || InTransitActivity
+//                        .getSWAngle() < -60)
+//                        && InTransitActivity.getAccel() > 5) {
+//                    InTransitActivity.setPlace(100);
+//                }
+//    }
 }
