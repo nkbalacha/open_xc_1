@@ -34,6 +34,10 @@ public class InTransitActivity extends Activity {
     private TextView mBackground;
     private int red = 0;
     private int green = 255;
+    /**
+     * Corresponds to how poorly the user has been driving recently. A higher <code>place</code>
+     * value signifies more violations.
+     */
     private static int place = 0;
 
     // OpenXC data
@@ -66,7 +70,7 @@ public class InTransitActivity extends Activity {
         setContentView(R.layout.activity_in_transit);
 
         // TODO: This is no longer necessary
-         mBackground = (TextView)findViewById(R.id.fullscreen_content); //we can remove this
+        mBackground = (TextView) findViewById(R.id.fullscreen_content); //we can remove this
 
         rulesChecked = RulesFragment.getRulesChecked(); //custom rules or no
 
@@ -74,11 +78,9 @@ public class InTransitActivity extends Activity {
         System.out.println(rulesChecked); //it works
 
         // constantly changing from red to green
-        myTimer.schedule(new TimerTask()
-        {
+        myTimer.schedule(new TimerTask() {
             @Override
-            public void run()
-            {
+            public void run() {
                 redToGreen();
             }
         }, 0, 500);
@@ -87,7 +89,7 @@ public class InTransitActivity extends Activity {
         // button scripts
         goToReview();
         testRule();
-    //    getLocation();
+        //    getLocation();
 
         /*
         Ideally we'd have something here that initializes a ruleset and then runs it throughout the
@@ -116,7 +118,7 @@ public class InTransitActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        if(mVehicleManager == null) {
+        if (mVehicleManager == null) {
             Intent intent = new Intent(this, VehicleManager.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
@@ -126,62 +128,64 @@ public class InTransitActivity extends Activity {
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             final VehicleSpeed speed = (VehicleSpeed) measurement;
-                    vehSpeed = speed;
-                    if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
-                        newRules.customMaxVehSpd(RulesFragment.getvSMax());
-                    } else {
-                        standardRules.ruleMaxVehSpd();
-                    }
+            vehSpeed = speed;
+            if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
+                newRules.customMaxVehSpd(RulesFragment.getvSMax());
+            } else {
+                standardRules.ruleMaxVehSpd();
+            }
         }
     };
 
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
             final EngineSpeed speed = (EngineSpeed) measurement;
-                    engSpeed = speed;
-                    if (rulesChecked = true && RulesFragment.getEngMax() != 0) {
-                        newRules.customMaxEngSpd(RulesFragment.getEngMax());
-                    } else {
-                        standardRules.ruleMaxEngSpd();
-                        standardRules.ruleSpeedSteering();
-                    }
+            engSpeed = speed;
+            if (rulesChecked = true && RulesFragment.getEngMax() != 0) {
+                newRules.customMaxEngSpd(RulesFragment.getEngMax());
+            } else {
+                standardRules.ruleMaxEngSpd();
+                standardRules.ruleSpeedSteering();
+            }
         }
     };
 
     AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
             final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
-                    accelPosition = position;
-                    if (rulesChecked = true && RulesFragment.getAccelMax() != 0) {
-                        newRules.customMaxAccel(RulesFragment.getAccelMax());
-                    } else {
-                        standardRules.ruleMaxAccel();
-                    }
+            accelPosition = position;
+            if (rulesChecked = true && RulesFragment.getAccelMax() != 0) {
+                newRules.customMaxAccel(RulesFragment.getAccelMax());
+            } else {
+                standardRules.ruleMaxAccel();
+            }
         }
-     };
+    };
 
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         public void receive(Measurement measurement) {
-            final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
-                    swAngle = angle;
-                    standardRules.ruleSteering();
-                }
+            //TODO why do we declare 2 variables to store the new steering measurement? (angle
+            // and swAngle)
+//            final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
+            swAngle = (SteeringWheelAngle) measurement;
+            setPlace(standardRules.ruleSteering(getSWAngle()));
+        }
     };
 
-    Latitude.Listener mLatListener = new Latitude.Listener(){
+    Latitude.Listener mLatListener = new Latitude.Listener() {
         public void receive(Measurement measurement) {
             final Latitude lati = (Latitude) measurement;
-                    lat = lati.getValue().doubleValue();
-                    totalLat.add(lat);
-                }
+            lat = lati.getValue().doubleValue();
+            totalLat.add(lat);
+        }
     };
 
     Longitude.Listener mLongListener = new Longitude.Listener() {
         public void receive(Measurement measurement) {
             final Longitude lg = (Longitude) measurement;
-                    lng = lg.getValue().doubleValue();
-                    totalLong.add(lng);
-                }
+            lng = lg.getValue().doubleValue();
+            totalLong.add(lng);
+        }
     };
 
 
@@ -198,7 +202,7 @@ public class InTransitActivity extends Activity {
             mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
             mVehicleManager.addListener(Latitude.class, mLatListener);
             mVehicleManager.addListener(Longitude.class, mLongListener);
-        //    System.out.println("after adding listeners");
+            //    System.out.println("after adding listeners");
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -215,36 +219,35 @@ public class InTransitActivity extends Activity {
     }
 
     // the timer!!
-    public void redToGreen()
-    {
+    public void redToGreen() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //if (place == 0) {
                 //    mBackground.setBackgroundResource(R.drawable.happy_driving);
                 //} else {
-                    if (place > 0 && place < 256) {
-                        place--;
-                    }
-                    if (place > 255) {
-                        place = 255;
-                    }
-                    mBackground.setBackgroundColor(Color.argb(255, red + place, green - place, 0));
-                   // System.out.println(place);  test to check the color
-    //            }
+                if (place > 0 && place < 256) {
+                    place--;
+                }
+                if (place > 255) {
+                    place = 255;
+                }
+                mBackground.setBackgroundColor(Color.argb(255, red + place, green - place, 0));
+                // System.out.println(place);  test to check the color
+                //            }
             }
         });
     }
 
-    /** Activates a listener for when the "stop trip" button is pressed. At that point in time,
+    /**
+     * Activates a listener for when the "stop trip" button is pressed. At that point in time,
      * the listeners and scripts on this activity are stopped, and the app will proceed to the
      * map activity page.
-     *
-      */
+     */
     public void goToReview() {
-        MapReviewButton = (Button)findViewById(R.id.stop_button);
+        MapReviewButton = (Button) findViewById(R.id.stop_button);
 
-        MapReviewButton.setOnClickListener(new View.OnClickListener(){
+        MapReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -252,21 +255,22 @@ public class InTransitActivity extends Activity {
                 stopEverything();
 
                 // transfers the map data
-                Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity.class);
+                Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity
+                        .class);
 
                 transferMapData.putExtra("latitude", totalLat);
                 transferMapData.putExtra("longitude", totalLong);
                 transferMapData.putExtra("ruleLatitude", ruleLat);
                 transferMapData.putExtra("ruleLongitude", ruleLong);
-         //       System.out.println("TotalLat: " + totalLat.toString());
-         //       System.out.println("TotalLong: " + totalLong.toString());
+                //       System.out.println("TotalLat: " + totalLat.toString());
+                //       System.out.println("TotalLong: " + totalLong.toString());
                 startActivity(transferMapData);
             }
         });
     }
 
     public void testRule() {
-        TestButton = (Button)findViewById(R.id.test_Button);
+        TestButton = (Button) findViewById(R.id.test_Button);
 
         TestButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,23 +291,42 @@ public class InTransitActivity extends Activity {
 
 
     // getters and setters
-    public static double getEng () { return engSpeed.getValue().doubleValue();}
+    public static double getEng() {
+        return engSpeed.getValue().doubleValue();
+    }
 
-    public static double getVeh () { return vehSpeed.getValue().doubleValue();}
+    public static double getVeh() {
+        return vehSpeed.getValue().doubleValue();
+    }
 
-    public static double getSWAngle () { return swAngle.getValue().doubleValue();}
+    public static double getSWAngle() {
+        return swAngle.getValue().doubleValue();
+    }
 
-    public static double getAccel () { return accelPosition.getValue().doubleValue();}
+    public static double getAccel() {
+        return accelPosition.getValue().doubleValue();
+    }
 
+    /**
+     * Adds <code>newPlace</code> to the <code>place</code> field, but keeps <code>place</code>
+     * at an upper limit of 255. setPlace() is called when a violation occurs, so this method
+     * also adds a latitude/longitude pair to the list of violation locations.
+     *
+     * @param newPlace is the additional value to be added to <code>place</code>
+     */
     public static void setPlace(int newPlace) {
-        place = place + newPlace;
+        //TODO: I think we should change this from public to private (and just call it within
+        // this class)
+
+
+        place = Math.min(place + newPlace, 255); // guarantees that place does not exceed 255
         ruleLat.add(lat);
         ruleLong.add(lng);
     }
 
     private void stopEverything() {
         // stops VehicleManager Listeners
-        if(mVehicleManager != null) {
+        if (mVehicleManager != null) {
             Log.i(TAG, "Unbinding from Vehicle Manager");
             mVehicleManager.removeListener(EngineSpeed.class,
                     mEngineSpeedListener);

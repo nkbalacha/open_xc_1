@@ -2,6 +2,7 @@ package com.openxcplatform.openxcstarter;
 
 import android.app.Activity;
 
+import java.util.ArrayDeque;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -9,14 +10,15 @@ public class BasicRules extends Activity {
 
     private double[] angleQueue;
 
-    public BasicRules() {
+    /* declaring these variables here because I think it will save memory space to only have
+    them declared once.
+     */
+    private ArrayDeque<Double> steeringQ;  //TODO-spencer: most efficient way to store this queue?
+    private double minAngle;
+    private double maxAngle;
 
-		/*
-         * What if we start a thread inside this constructor, and just have all of the
-		 * rules run inside the same thread? And then we could create an instance of
-		 * BasicRules inside the onCreate method of InTransit activity, which would
-		 * start the thread.
-		 */
+    public BasicRules() {
+        steeringQ = new ArrayDeque<>();
     }
 
     /**
@@ -41,7 +43,7 @@ public class BasicRules extends Activity {
 
     /**
      * Enforces that the driver should not rotate the steering wheel by 90 degrees or more during
-     * any period of 0.5 seconds.
+     * any period of 0.5 seconds. Violation severity is 50 place units.
      *
      * This is a rudimentary algorithm. The rule is called slightly less than 10 times a second
      * (on average 108 millisec between calls), so we will keep a queue of 10 values.
@@ -51,10 +53,51 @@ public class BasicRules extends Activity {
      * Then the maximum and minimum are calculated, and we check if there is a difference of 90
      * degrees or greater.
      */
-    public void ruleSteering() {
+    public int ruleSteering(double newAngle) {
         // the mod is used to just take the last 4 digits of the execution time, for convenience
 //        System.out.println(System.currentTimeMillis() % 10000);
 
+        /*
+        Pseudo-code
+
+        if size of queue > 10, return an error
+        == 10, pop first out
+
+        in all cases:
+        add most recent value (parameter) to the queue
+        calculate the max
+        calculate the min
+        calculate the difference (max- min)
+        if > 90, then adjust 'place' accordingly.
+
+         */
+
+        if (steeringQ.size() > 10) {
+            throw new IndexOutOfBoundsException("steering queue has exceeded 10 elements.");
+        }
+        else if (steeringQ.size() == 10){
+            steeringQ.removeLast();
+        }
+
+        steeringQ.addFirst(newAngle);
+        minAngle = newAngle;
+        maxAngle = newAngle;
+
+        for (double val : steeringQ){
+            if (val < minAngle) minAngle = val;
+            if (val > maxAngle) maxAngle = val;
+        }
+
+        System.out.println(maxAngle - minAngle);
+
+        /*
+        if angle difference is 90 or greater, clear the queue, and return the severity value
+         */
+        if ((maxAngle - minAngle) >= 90){
+            steeringQ.clear();
+            return 50;
+        }
+        return 0;
 
     }
 
