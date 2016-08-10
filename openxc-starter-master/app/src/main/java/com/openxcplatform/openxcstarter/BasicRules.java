@@ -8,8 +8,6 @@ import java.util.TimerTask;
 
 public class BasicRules extends Activity {
 
-    private double[] angleQueue;
-
     /* declaring these variables here because I think it will save memory space to only have
     them declared once.
      */

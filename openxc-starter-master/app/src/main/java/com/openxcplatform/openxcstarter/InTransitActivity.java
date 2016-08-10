@@ -324,17 +324,20 @@ public class InTransitActivity extends Activity {
         //TODO: I think we should change this from public to private (and just call it within
         // this class)
 
+        //TODO-spencer: if newPlace is 0, this method does nothing. Can this be simplified
+        // outside of this method?
         if (newPlace > 0){
             ruleLat.add(lat);
             ruleLong.add(lng);
-        }
 
-        place = Math.min(place + newPlace, 255); // guarantees that place does not exceed 255
-        try {
-            wait(10000);
-        } catch (InterruptedException e) {
-            System.out.println("wait method inside setPlace() failed.");
-            e.printStackTrace();
+            place = Math.min(place + newPlace, 255); // guarantees that place does not exceed 255
+
+            try {
+                wait(10000);
+            } catch (InterruptedException e) {
+                System.out.println("wait method inside setPlace() failed.");
+                e.printStackTrace();
+            }
         }
     }
 
