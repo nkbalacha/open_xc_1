@@ -146,13 +146,15 @@ public class InTransitActivity extends Activity {
             engSpeed = (EngineSpeed) measurement;
 
             //TODO: Does this need to be checked on every single loop of the listener?
-            if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
-                newRules.customMaxEngSpd(RulesFragment.getEngMax());
-            } else {
+//            if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
+//                newRules.customMaxEngSpd(RulesFragment.getEngMax());
+//            } else {
+//
+//                setPlace(standardRules.ruleMaxEngSpd(getEng()));
+////                standardRules.ruleSpeedSteering();
+//            }
 
-                setPlace(standardRules.ruleMaxEngSpd(getEng()));
-//                standardRules.ruleSpeedSteering();
-            }
+            setPlace(standardRules.ruleMaxEngSpd(getEng()));
         }
     };
 
