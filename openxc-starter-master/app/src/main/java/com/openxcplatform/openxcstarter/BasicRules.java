@@ -20,22 +20,30 @@ public class BasicRules extends Activity {
     }
 
     /**
-     * Enforces the maximum engine speed to be 4000 RPM.
-     */
-    public void ruleMaxEngSpd() {
-                if (InTransitActivity.getEng() > 4000) {
-                    InTransitActivity.setPlace(40);
-                }
-                System.out.println("running basic rules");
-    }
-
-    /**
      * Enforce the maximum vehicle speed as 90 km/hr.
      */
     public void ruleMaxVehSpd() {
-                if (InTransitActivity.getVeh() > 90) {
-                    InTransitActivity.setPlace(80);
-                }
+        if (InTransitActivity.getVeh() > 90) {
+            InTransitActivity.setPlace(80, 2, InTransitActivity.getVeh());
+        }
+    }
+
+    /**
+     * Enforces the maximum engine speed to be 4000 RPM.
+     */
+    public void ruleMaxEngSpd() {
+        if (InTransitActivity.getEng() > 4000) {
+            InTransitActivity.setPlace(40, 1, InTransitActivity.getEng());
+        }
+    }
+
+    /**
+     * Limits the maximum acceleration pedal value to 97.
+     */
+    public void ruleMaxAccel() {
+        if (InTransitActivity.getAccel() > 97) {
+            InTransitActivity.setPlace(30, 3, InTransitActivity.getAccel());
+        }
     }
 
     /**
@@ -52,18 +60,7 @@ public class BasicRules extends Activity {
      */
     public void ruleSteering() {
         // the mod is used to just take the last 4 digits of the execution time, for convenience
-//        System.out.println(System.currentTimeMillis() % 10000);
-
-
-    }
-
-    /**
-     * Limits the maximum acceleration pedal value to 97.
-     */
-    public void ruleMaxAccel() {
-                if (InTransitActivity.getAccel() > 97) {
-                    InTransitActivity.setPlace(30);
-                }
+        //System.out.println(System.currentTimeMillis() % 10000);
     }
 
     /**
@@ -76,7 +73,7 @@ public class BasicRules extends Activity {
                         && (InTransitActivity.getSWAngle() > 60 || InTransitActivity
                         .getSWAngle() < -60)
                         && InTransitActivity.getAccel() > 5) {
-                    InTransitActivity.setPlace(100);
+                    InTransitActivity.setPlace(100, 4, 360); // temp errorValue
                 }
     }
 }

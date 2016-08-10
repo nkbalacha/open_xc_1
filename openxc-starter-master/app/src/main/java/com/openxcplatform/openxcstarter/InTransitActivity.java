@@ -6,14 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.icu.util.Measure;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
@@ -49,8 +47,12 @@ public class InTransitActivity extends Activity {
     // map coordinates
     private ArrayList<Double> totalLat = new ArrayList<>();
     private ArrayList<Double> totalLong = new ArrayList<>();
+
+    // values being sent to the Map Review page
     private static ArrayList<Double> ruleLat = new ArrayList<>();
     private static ArrayList<Double> ruleLong = new ArrayList<>();
+    private static ArrayList<Integer> errorNames = new ArrayList<>();
+    private static ArrayList<Double> errorValues = new ArrayList<>();
 
     // misc
     private BasicRules standardRules = new BasicRules();
@@ -66,7 +68,7 @@ public class InTransitActivity extends Activity {
 
         setContentView(R.layout.activity_in_transit);
 
-         mBackground = (ImageView) findViewById(R.id.overlay_layer);
+        mBackground = (ImageView) findViewById(R.id.overlay_layer);
 
         rulesChecked = RulesFragment.getRulesChecked();
 
@@ -235,7 +237,7 @@ public class InTransitActivity extends Activity {
                     mBackground.setBackgroundColor(Color.argb(255, place * 2, 255, 0));
                 }
                 if (place >= 128) {
-                    mBackground.setBackgroundColor(Color.argb(255, 255, 255 - 2*(place - 127), 0));
+                    mBackground.setBackgroundColor(Color.argb(255, 255, 256 - 2*(place - 127), 0));
                 }
                 System.out.println(place);
             }
@@ -264,6 +266,8 @@ public class InTransitActivity extends Activity {
                 transferMapData.putExtra("longitude", totalLong);
                 transferMapData.putExtra("ruleLatitude", ruleLat);
                 transferMapData.putExtra("ruleLongitude", ruleLong);
+                transferMapData.putExtra("errorNames", errorNames);
+                transferMapData.putExtra("errorValues", errorValues);
                 startActivity(transferMapData);
             }
         });
@@ -275,10 +279,7 @@ public class InTransitActivity extends Activity {
         TestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                place = place + 60;
-                System.out.println(place);
-                ruleLat.add(lat);
-                ruleLong.add(lng);
+                setPlace(60, 4, 420); //test values
             }
         });
     }
@@ -292,10 +293,12 @@ public class InTransitActivity extends Activity {
 
     public static double getAccel () { return accelPosition.getValue().doubleValue();}
 
-    public static void setPlace(int newPlace) {
+    public static void setPlace(int newPlace, int ruleNum, double errorValue) {
         place = place + newPlace;
         ruleLat.add(lat);
         ruleLong.add(lng);
+        errorNames.add(ruleNum);
+        errorValues.add(errorValue);
     }
 
     private void stopEverything() {

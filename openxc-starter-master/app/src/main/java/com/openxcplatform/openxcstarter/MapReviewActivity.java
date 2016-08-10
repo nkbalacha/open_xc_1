@@ -27,7 +27,15 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private ArrayList<Double> tLong;
     private ArrayList<Double> tRuleLat;
     private ArrayList<Double> tRuleLong;
+    private ArrayList<Integer> tErrorNames;
+    private ArrayList<Double> tErrorValues;
     private Button homeButton;
+
+    // rule strings
+    private final String ruleOne = "Exceeded max vehicle speed";
+    private final String ruleTwo = "Exceeded max engine speed";
+    private final String ruleThree = "Accelerated too quickly";
+    private final String ruleFour = "Turned too quickly";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +51,22 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        // data transfer from InTransitActivity to this activity
         tLat = (ArrayList<Double>)getIntent().getSerializableExtra("latitude");
         tLong = (ArrayList<Double>)getIntent().getSerializableExtra("longitude");
         tRuleLat = (ArrayList<Double>)getIntent().getSerializableExtra("ruleLatitude");
         tRuleLong = (ArrayList<Double>)getIntent().getSerializableExtra("ruleLongitude");
+        tErrorNames = (ArrayList<Integer>)getIntent().getSerializableExtra("errorNames");
+        tErrorValues = (ArrayList<Double>)getIntent().getSerializableExtra("errorValues");
 
+        // setting up the google map
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
+
+        // adding polylines if there are coordinates available
         if (tLat.size() == 0 || tLong.size() == 0) {
             // do nothing
         } else {
@@ -69,12 +83,31 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
 
+        // cases for broken rules
         for(int i = 0; i < tRuleLat.size() - 1; i++) {
+            String ruleBroken;
+            switch (tErrorNames.get(i)) {
+                case 1: ruleBroken = ruleOne;
+                        break;
+                case 2: ruleBroken = ruleTwo;
+                        break;
+                case 3: ruleBroken = ruleThree;
+                        break;
+                case 4: ruleBroken = ruleFour;
+                        break;
+                default: ruleBroken = "You fucked up";
+                        break;
+            }
+
+            // adding error markers to the polylines
             mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i))).title("broken rule"));
+                    .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i))).title(ruleBroken +
+                            ": " + tErrorValues.get(i).toString()));
         }
         System.out.println("Latitudes: " + tRuleLat.toString());
         System.out.println("Longitude: " + tRuleLong.toString());
+        System.out.println("Broken rule numbers: " + tErrorNames.toString());
+        System.out.println("Broken rule values: " + tErrorValues.toString());
     }
 
     public void goToHome() {
