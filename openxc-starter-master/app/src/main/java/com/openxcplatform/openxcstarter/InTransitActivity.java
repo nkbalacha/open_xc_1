@@ -53,6 +53,7 @@ public class InTransitActivity extends Activity {
     private static ArrayList<Double> ruleLong = new ArrayList<>();
     private static ArrayList<Integer> errorNames = new ArrayList<>();
     private static ArrayList<Double> errorValues = new ArrayList<>();
+    private static ArrayList<Integer> errorColors = new ArrayList<>();
 
     // misc
     private BasicRules standardRules = new BasicRules();
@@ -165,6 +166,8 @@ public class InTransitActivity extends Activity {
             final Latitude lati = (Latitude) measurement;
             lat = lati.getValue().doubleValue();
             totalLat.add(lat);
+            errorColors.add(place);
+            System.out.println(lati);
         }
     };
 
@@ -268,6 +271,7 @@ public class InTransitActivity extends Activity {
                 transferMapData.putExtra("ruleLongitude", ruleLong);
                 transferMapData.putExtra("errorNames", errorNames);
                 transferMapData.putExtra("errorValues", errorValues);
+                transferMapData.putExtra("errorColors", errorColors);
                 startActivity(transferMapData);
             }
         });

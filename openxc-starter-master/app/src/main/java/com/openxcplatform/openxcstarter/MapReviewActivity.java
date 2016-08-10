@@ -2,6 +2,7 @@ package com.openxcplatform.openxcstarter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,6 +30,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private ArrayList<Double> tRuleLong;
     private ArrayList<Integer> tErrorNames;
     private ArrayList<Double> tErrorValues;
+    private ArrayList<Integer> tErrorColors;
     private Button homeButton;
 
     // rule strings
@@ -36,6 +38,10 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private final String ruleTwo = "Exceeded max engine speed";
     private final String ruleThree = "Accelerated too quickly";
     private final String ruleFour = "Turned too quickly";
+
+    // test for colored polylines
+    //public int start;
+    int polyColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +64,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         tRuleLong = (ArrayList<Double>)getIntent().getSerializableExtra("ruleLongitude");
         tErrorNames = (ArrayList<Integer>)getIntent().getSerializableExtra("errorNames");
         tErrorValues = (ArrayList<Double>)getIntent().getSerializableExtra("errorValues");
+        tErrorColors = (ArrayList<Integer>)getIntent().getSerializableExtra("errorColors");
 
         // setting up the google map
         mMap = googleMap;
@@ -70,19 +77,36 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         if (tLat.size() == 0 || tLong.size() == 0) {
             // do nothing
         } else {
+            //start = tErrorNames.get(0);
+
             mMap.addMarker(new MarkerOptions().position(new LatLng(tLat.get(tLat.size() - 1),
                     tLong.get(tLong.size() - 1))).title("End of trip"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tLat.get(tLat.size() - 1),
                     tLong.get(tLong.size() - 1)), 16));
 
             for(int i = 0; i < tLat.size() - 1; i++) {
+                /*if (tErrorNames.get(i + 1) == start) {
+                    polyColor = Color.RED;
+                } else {
+                    polyColor = Color.BLACK;
+                }*/
+
+                if (tErrorColors.get(i) < 128) {
+                    polyColor = (Color.argb(255, tErrorColors.get(i) * 2, 255, 0));
+                }
+                if (tErrorColors.get(i) >= 128) {
+                    polyColor = (Color.argb(255, 255, 256 - 2*(tErrorColors.get(i) - 127), 0));
+                }
+
                 mMap.addPolyline(new PolylineOptions().geodesic(true)
                         .add(new LatLng(tLat.get(i), tLong.get(i)))
                         .add(new LatLng(tLat.get(i + 1), tLong.get(i + 1)))
+                        .color(polyColor)
                 );
+
+                //start = tErrorNames.get(i + 1);
             }
         }
-
         // cases for broken rules
         for(int i = 0; i < tRuleLat.size() - 1; i++) {
             String ruleBroken;
