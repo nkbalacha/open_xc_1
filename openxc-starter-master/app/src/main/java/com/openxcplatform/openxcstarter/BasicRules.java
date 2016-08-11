@@ -25,6 +25,7 @@ public class BasicRules extends Activity {
     public void ruleMaxVehSpd() {
         if (InTransitActivity.getVeh() > 90) {
             InTransitActivity.setPlace(80, 2, InTransitActivity.getVeh());
+            InTransitActivity.setSpeedBreakTime();
         }
     }
 
@@ -34,6 +35,7 @@ public class BasicRules extends Activity {
     public void ruleMaxEngSpd() {
         if (InTransitActivity.getEng() > 4000) {
             InTransitActivity.setPlace(40, 1, InTransitActivity.getEng());
+            InTransitActivity.setEngBreakTime();
         }
     }
 
@@ -43,6 +45,7 @@ public class BasicRules extends Activity {
     public void ruleMaxAccel() {
         if (InTransitActivity.getAccel() > 97) {
             InTransitActivity.setPlace(30, 3, InTransitActivity.getAccel());
+            InTransitActivity.setAccelBreakTime();
         }
     }
 
@@ -74,6 +77,7 @@ public class BasicRules extends Activity {
                         .getSWAngle() < -60)
                         && InTransitActivity.getAccel() > 5) {
                     InTransitActivity.setPlace(100, 4, 360); // temp errorValue
+                    InTransitActivity.setAngleBreakTime();
                 }
     }
 }

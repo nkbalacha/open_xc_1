@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,13 +30,13 @@ import java.util.TimerTask;
 public class InTransitActivity extends Activity {
     private static final String TAG = "InTransitActivity";
 
-    // so background starts at all green
+    // all the variables for the background gradient, starts at green
     private ImageView mBackground;
     private int red = 0;
     private int green = 255;
     private static int place = 0;
 
-    // OpenXC data
+    // all the OpenXC data variables that we measure
     private VehicleManager mVehicleManager;
     private static EngineSpeed engSpeed;
     private static VehicleSpeed vehSpeed;
@@ -55,25 +56,34 @@ public class InTransitActivity extends Activity {
     private static ArrayList<Double> errorValues = new ArrayList<>();
     private static ArrayList<Integer> errorColors = new ArrayList<>();
 
-    // misc
+    // misc variables, remind me to sort later
     private BasicRules standardRules = new BasicRules();
     private CustomRules newRules = new CustomRules();
     Timer myTimer = new Timer();
     public Button TestButton;    //remove in final presentation
     public Button MapReviewButton;
     private boolean rulesChecked;
+    private static long speedBreakTime = 0;
+    private static long engBreakTime = 0;
+    private static long angleBreakTime = 0;
+    private static long accelBreakTime = 0;
 
+    private int errorMargin = 30000;
+    private static SystemClock globalClock;
+
+    // when this activity is created, we set the view to the initial green gradient
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_in_transit);
 
+        // this is the emoji that gets applied
         mBackground = (ImageView) findViewById(R.id.overlay_layer);
 
+        // initial check for custom rules
         rulesChecked = RulesFragment.getRulesChecked();
 
-        // constantly changing from red to green
+        // script that changes the gradient from red to green
         myTimer.schedule(new TimerTask()
         {
             @Override
@@ -81,7 +91,7 @@ public class InTransitActivity extends Activity {
             {
                 redToGreen();
             }
-        }, 0, 200);
+        }, 0, 1500);
 
         // button scripts
         goToReview();
@@ -105,12 +115,14 @@ public class InTransitActivity extends Activity {
 
     }
 
+    // when the app is paused, stop everything
     @Override
     public void onPause() {
         super.onPause();
-        stopEverything();  //unbinds everything
+        stopEverything();  //unbinds everything, we may want to remove this for the wishlist goal
     }
 
+    // when the app is resumed, start everything
     @Override
     public void onResume() {
         super.onResume();
@@ -120,57 +132,77 @@ public class InTransitActivity extends Activity {
         }
     }
 
+    /*
+     listener for vehicle speed, includes a check for the mistake margin (you can only break this
+      rule once every 30 seconds), then checks for a custom vs standard ruleset
+      */
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             vehSpeed = (VehicleSpeed) measurement;
-            if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
-                newRules.customMaxVehSpd(RulesFragment.getvSMax());
-            } else {
-                standardRules.ruleMaxVehSpd();
+            System.out.println(vehSpeed.getValue().toString());       // prints are for debugging
+            System.out.println("Time to next rule broken: " + (speedBreakTime + errorMargin - globalClock.elapsedRealtime()));
+            if (globalClock.elapsedRealtime() > speedBreakTime + errorMargin) {
+                if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
+                    newRules.customMaxVehSpd(RulesFragment.getvSMax());
+                } else {
+                    standardRules.ruleMaxVehSpd();
+                }
             }
         }
     };
 
+    // same as above
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
             engSpeed = (EngineSpeed) measurement;
-            if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
-                newRules.customMaxEngSpd(RulesFragment.getEngMax());
-            } else {
-                standardRules.ruleMaxEngSpd();
-                standardRules.ruleSpeedSteering();
+            if (globalClock.elapsedRealtime() > engBreakTime + errorMargin) {
+                if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
+                    newRules.customMaxEngSpd(RulesFragment.getEngMax());
+                } else {
+                    standardRules.ruleMaxEngSpd();
+                    standardRules.ruleSpeedSteering();
+                }
             }
         }
     };
 
+    // same as above
     AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
             accelPosition = (AcceleratorPedalPosition) measurement;
-            if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
-                newRules.customMaxAccel(RulesFragment.getAccelMax());
-            } else {
-                standardRules.ruleMaxAccel();
+            if (globalClock.elapsedRealtime() > accelBreakTime + errorMargin) {
+                if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
+                    newRules.customMaxAccel(RulesFragment.getAccelMax());
+                } else {
+                    standardRules.ruleMaxAccel();
+                }
             }
         }
      };
 
+    // same as above
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         public void receive(Measurement measurement) {
-            swAngle = (SteeringWheelAngle) measurement;
-            standardRules.ruleSteering();
+            if (globalClock.elapsedRealtime() > angleBreakTime + errorMargin) {
+                swAngle = (SteeringWheelAngle) measurement;
+                standardRules.ruleSteering();
+            }
         }
     };
 
+    // listener for latitude, puts the received value into an arrayList of doubles and adds the current
+    // color to another arrayList
     Latitude.Listener mLatListener = new Latitude.Listener(){
         public void receive(Measurement measurement) {
             final Latitude lati = (Latitude) measurement;
             lat = lati.getValue().doubleValue();
             totalLat.add(lat);
             errorColors.add(place);
-            System.out.println(lati);
+            System.out.println(lati);       // for testing
         }
     };
 
+    // same as above
     Longitude.Listener mLongListener = new Longitude.Listener() {
         public void receive(Measurement measurement) {
             final Longitude lg = (Longitude) measurement;
@@ -179,7 +211,7 @@ public class InTransitActivity extends Activity {
         }
     };
 
-
+    // OpenXC command to support and manage the listeners
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
@@ -202,6 +234,7 @@ public class InTransitActivity extends Activity {
         }
     };
 
+    // actually no idea what this is for
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -213,6 +246,7 @@ public class InTransitActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                // different emojis for different color backgrounds
                 if (place > 204) {
                     mBackground.setImageResource(R.drawable.scared_face);
                 }
@@ -229,7 +263,7 @@ public class InTransitActivity extends Activity {
                     mBackground.setImageResource(R.drawable.happy_face);
                 }
 
-
+                // algorithm to get specific color gradient
                 if (place > 0 && place < 256) {
                     place--;
                 }
@@ -242,7 +276,7 @@ public class InTransitActivity extends Activity {
                 if (place >= 128) {
                     mBackground.setBackgroundColor(Color.argb(255, 255, 256 - 2*(place - 127), 0));
                 }
-                System.out.println(place);
+                System.out.println(place);  // for testing
             }
         });
     }
@@ -262,7 +296,7 @@ public class InTransitActivity extends Activity {
                 // removes all the listeners, stops the scripts, etc
                 stopEverything();
 
-                // transfers the map data
+                // transfers the map data to MapReviewActivity
                 Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity.class);
 
                 transferMapData.putExtra("latitude", totalLat);
@@ -277,6 +311,7 @@ public class InTransitActivity extends Activity {
         });
     }
 
+    // test button
     public void testRule() {
         TestButton = (Button)findViewById(R.id.test_Button);
 
@@ -304,6 +339,14 @@ public class InTransitActivity extends Activity {
         errorNames.add(ruleNum);
         errorValues.add(errorValue);
     }
+
+    public static void setSpeedBreakTime() { speedBreakTime = globalClock.elapsedRealtime();}
+
+    public static void setEngBreakTime() { engBreakTime = globalClock.elapsedRealtime();}
+
+    public static void setAngleBreakTime() { angleBreakTime = globalClock.elapsedRealtime();}
+
+    public static void setAccelBreakTime() { accelBreakTime = globalClock.elapsedRealtime();}
 
     private void stopEverything() {
         // stops VehicleManager Listeners

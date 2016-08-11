@@ -15,6 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -23,38 +25,45 @@ import java.util.ArrayList;
 
 public class MapReviewActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    // map initialization
     private GoogleMap mMap;
+
+    // latitude and longitude to make polylines, with their color
     private ArrayList<Double> tLat;
     private ArrayList<Double> tLong;
+    private int polyColor;
+
+    // lat/long of error places
     private ArrayList<Double> tRuleLat;
     private ArrayList<Double> tRuleLong;
+
+    // error information
     private ArrayList<Integer> tErrorNames;
     private ArrayList<Double> tErrorValues;
     private ArrayList<Integer> tErrorColors;
+
+    // button in top left that takes you back to home screen
     private Button homeButton;
 
-    // rule strings
+    // outputs for mistakes made in the error markers
     private final String ruleOne = "Exceeded max vehicle speed";
     private final String ruleTwo = "Exceeded max engine speed";
     private final String ruleThree = "Accelerated too quickly";
     private final String ruleFour = "Turned too quickly";
 
-    // test for colored polylines
-    //public int start;
-    int polyColor;
-
+    // on activity creation, gets and sets the view to a google map, then starts the home button script
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_review);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         goToHome();
     }
 
-
+    // when the map is initialized, get all the relevant data for polylines/error markers from
+    // InTransitActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // data transfer from InTransitActivity to this activity
@@ -66,7 +75,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         tErrorValues = (ArrayList<Double>)getIntent().getSerializableExtra("errorValues");
         tErrorColors = (ArrayList<Integer>)getIntent().getSerializableExtra("errorColors");
 
-        // setting up the google map
+        // setting up the google map, enabling location services
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager)
@@ -77,38 +86,40 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         if (tLat.size() == 0 || tLong.size() == 0) {
             // do nothing
         } else {
-            //start = tErrorNames.get(0);
+            // adds an azure marker for the start and end of the trip
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(tLat.get(0), tLong.get(0)))
+                    .title("Start of trip")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(tLat.get(tLat.size() - 1), tLong.get(tLong.size() - 1)))
+                    .title("End of trip")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-            mMap.addMarker(new MarkerOptions().position(new LatLng(tLat.get(tLat.size() - 1),
-                    tLong.get(tLong.size() - 1))).title("End of trip"));
+            // moves camera to center on the end of the trip
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tLat.get(tLat.size() - 1),
                     tLong.get(tLong.size() - 1)), 16));
 
+            // makes polylines using latitude/longitude/color
             for(int i = 0; i < tLat.size() - 1; i++) {
-                /*if (tErrorNames.get(i + 1) == start) {
-                    polyColor = Color.RED;
-                } else {
-                    polyColor = Color.BLACK;
-                }*/
-
+                // algorithm for determining polyline color
                 if (tErrorColors.get(i) < 128) {
                     polyColor = (Color.argb(255, tErrorColors.get(i) * 2, 255, 0));
                 }
                 if (tErrorColors.get(i) >= 128) {
                     polyColor = (Color.argb(255, 255, 256 - 2*(tErrorColors.get(i) - 127), 0));
                 }
-
+                // actually making the polyline
                 mMap.addPolyline(new PolylineOptions().geodesic(true)
                         .add(new LatLng(tLat.get(i), tLong.get(i)))
                         .add(new LatLng(tLat.get(i + 1), tLong.get(i + 1)))
                         .color(polyColor)
                 );
-
-                //start = tErrorNames.get(i + 1);
             }
         }
+
         // cases for broken rules
-        for(int i = 0; i < tRuleLat.size() - 1; i++) {
+        for(int i = 0; i < tRuleLat.size(); i++) {
             String ruleBroken;
             switch (tErrorNames.get(i)) {
                 case 1: ruleBroken = ruleOne;
@@ -125,15 +136,17 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
 
             // adding error markers to the polylines
             mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i))).title(ruleBroken +
-                            ": " + tErrorValues.get(i).toString()));
-        }
-        System.out.println("Latitudes: " + tRuleLat.toString());
+                    .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i)))
+                    .title(ruleBroken + ": " + tErrorValues.get(i).toString())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+            }
+        System.out.println("Latitudes: " + tRuleLat.toString());        // for debugging
         System.out.println("Longitude: " + tRuleLong.toString());
         System.out.println("Broken rule numbers: " + tErrorNames.toString());
         System.out.println("Broken rule values: " + tErrorValues.toString());
     }
 
+    // script for the home button in the top left
     public void goToHome() {
         homeButton = (Button)findViewById(R.id.but_home);
 

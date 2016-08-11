@@ -20,7 +20,7 @@
         <!-- Smart trip button -->
         <Button
             android:id="@+id/but_smartTrip"
-            android:text="Smart trip"
+            android:text="Start trip"
             android:textSize="46sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
