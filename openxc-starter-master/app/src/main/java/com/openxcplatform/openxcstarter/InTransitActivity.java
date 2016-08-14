@@ -6,13 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.icu.util.Measure;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.openxc.VehicleManager;
 import com.openxc.measurements.AcceleratorPedalPosition;
@@ -31,8 +31,8 @@ public class InTransitActivity extends Activity {
 
     private static final String TAG = "InTransitActivity";
 
-    // so background starts at all green
-    private TextView mBackground;
+    // all the variables for the background gradient, starts at green
+    private ImageView mBackground;
     private int red = 0;
     private int green = 255;
     /**
@@ -41,7 +41,7 @@ public class InTransitActivity extends Activity {
      */
     private static int place = 0;
 
-    // OpenXC data
+    // all the OpenXC data variables that we measure
     private VehicleManager mVehicleManager;
     private static EngineSpeed engSpeed;
     private static VehicleSpeed vehSpeed;
@@ -53,50 +53,59 @@ public class InTransitActivity extends Activity {
     // map coordinates
     private ArrayList<Double> totalLat = new ArrayList<>();
     private ArrayList<Double> totalLong = new ArrayList<>();
+
+    // values being sent to the Map Review page
     private static ArrayList<Double> ruleLat = new ArrayList<>();
     private static ArrayList<Double> ruleLong = new ArrayList<>();
+    private static ArrayList<Integer> errorNames = new ArrayList<>();
+    private static ArrayList<Double> errorValues = new ArrayList<>();
+    private static ArrayList<Integer> errorColors = new ArrayList<>();
 
-    // misc
+    // misc variables, remind me to sort later
     private BasicRules standardRules = new BasicRules();
     private CustomRules newRules = new CustomRules();
     Timer myTimer = new Timer();
     public Button TestButton;    //remove in final presentation
     public Button MapReviewButton;
     private boolean rulesChecked;
+    private static long speedBreakTime = 0;
+    private static long engBreakTime = 0;
+    private static long angleBreakTime = 0;
+    private static long accelBreakTime = 0;
 
+    private int errorMargin = 30000;
+    private static SystemClock globalClock;
+
+    // when this activity is created, we set the view to the initial green gradient
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_in_transit);
 
-        // TODO: This is no longer necessary
-        mBackground = (TextView) findViewById(R.id.fullscreen_content); //we can remove this
+        // this is the emoji that gets applied
+        mBackground = (ImageView) findViewById(R.id.overlay_layer);
 
-        rulesChecked = RulesFragment.getRulesChecked(); //custom rules or no
+        // initial check for custom rules
+        rulesChecked = RulesFragment.getRulesChecked();
 
-        // test for switch in RulesFragment
-        System.out.println(rulesChecked); //it works
-
-        // constantly changing from red to green
-        myTimer.schedule(new TimerTask() {
+        // script that changes the gradient from red to green
+        myTimer.schedule(new TimerTask()
+        {
             @Override
             public void run() {
                 redToGreen();
             }
-        }, 0, 500);
-
+        }, 0, 1500);
 
         // button scripts
         goToReview();
         testRule();
-        //    getLocation();
 
         /*
         Ideally we'd have something here that initializes a ruleset and then runs it throughout the
         activity. Currently it fails because the listeners are called after the stuff here begins.
          */
-        /*if (rulesChecked = true) {
+        /*if (rulesChecked == true) {
             new ruleSet = new CustomRules();
         } else {
             new ruleSet = new BasicRules();
@@ -110,12 +119,14 @@ public class InTransitActivity extends Activity {
 
     }
 
+    // when the app is paused, stop everything
     @Override
     public void onPause() {
         super.onPause();
-        stopEverything();  //unbinds everything
+        stopEverything();  //unbinds everything, we may want to remove this for the wishlist goal
     }
 
+    // when the app is resumed, start everything
     @Override
     public void onResume() {
         super.onResume();
@@ -125,69 +136,81 @@ public class InTransitActivity extends Activity {
         }
     }
 
-    //TODO: why do we use redundant variables for the listeners?
-//    VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
-//        public void receive(Measurement measurement) {
-//            final VehicleSpeed speed = (VehicleSpeed) measurement;
-//            vehSpeed = speed;
-//            if (rulesChecked = true && RulesFragment.getvSMax() != 0) {
-//                newRules.customMaxVehSpd(RulesFragment.getvSMax());
-//            } else {
-//                standardRules.ruleMaxVehSpd();
-//            }
-//        }
-//    };
+    /*
+     listener for vehicle speed, includes a check for the mistake margin (you can only break this
+      rule once every 30 seconds), then checks for a custom vs standard ruleset
+      */
+    VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
+        public void receive(Measurement measurement) {
+            vehSpeed = (VehicleSpeed) measurement;
+//            System.out.println(vehSpeed.getValue().toString());       // prints are for debugging
+//            System.out.println("Time to next rule broken: " + (speedBreakTime + errorMargin - globalClock.elapsedRealtime()));
+            if (globalClock.elapsedRealtime() > speedBreakTime + errorMargin) {
+                if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
+                    newRules.customMaxVehSpd(RulesFragment.getvSMax());
+                } else {
+                    standardRules.ruleMaxVehSpd();
+                }
+            }
+        }
+    };
 
+    // same as above
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
 
-            //TODO: what is the point of defining a new variable 'speed'?
-//            final EngineSpeed speed = (EngineSpeed) measurement;
-            engSpeed = (EngineSpeed) measurement;
-
-            //TODO: Does this need to be checked on every single loop of the listener?
-//            if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
-//                newRules.customMaxEngSpd(RulesFragment.getEngMax());
-//            } else {
-//
-//                setPlace(standardRules.ruleMaxEngSpd(getEng()));
-////                standardRules.ruleSpeedSteering();
-//            }
-
-            setPlace(standardRules.ruleMaxEngSpd(getEng()));
+			engSpeed = (EngineSpeed) measurement;
+            if (globalClock.elapsedRealtime() > engBreakTime + errorMargin) {
+                if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
+                    newRules.customMaxEngSpd(RulesFragment.getEngMax());
+                } else {
+                    standardRules.ruleMaxEngSpd();
+                    standardRules.ruleSpeedSteering();
+                    setPlace(standardRules.ruleMaxEngSpd(getEng()));
+                }
+            }
         }
     };
 
-//    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
-//        public void receive(Measurement measurement) {
-//            final AcceleratorPedalPosition position = (AcceleratorPedalPosition) measurement;
-//            accelPosition = position;
-//            if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
-//                newRules.customMaxAccel(RulesFragment.getAccelMax());
-//            } else {
-//                standardRules.ruleMaxAccel();
-//            }
-//        }
-//    };
+    // same as above
+    AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
+        public void receive(Measurement measurement) {
+            accelPosition = (AcceleratorPedalPosition) measurement;
+            if (globalClock.elapsedRealtime() > accelBreakTime + errorMargin) {
+                if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
+                    newRules.customMaxAccel(RulesFragment.getAccelMax());
+                } else {
+                    standardRules.ruleMaxAccel();
+                }
+            }
+        }
+     };
 
+    // same as above
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         public void receive(Measurement measurement) {
-            //TODO why do we declare 2 variables to store the new steering measurement? (angle
-            // and swAngle)
-//            final SteeringWheelAngle angle = (SteeringWheelAngle) measurement;
-            swAngle = (SteeringWheelAngle) measurement;
-            setPlace(standardRules.ruleSteering(getSWAngle()));
+
+            if (globalClock.elapsedRealtime() > angleBreakTime + errorMargin) {
+                swAngle = (SteeringWheelAngle) measurement;
+//                standardRules.ruleSteering();	//TODO: comment this line out.
+                setPlace(standardRules.ruleSteering(getSWAngle()));
+            }
         }
     };
 
-    Latitude.Listener mLatListener = new Latitude.Listener() {
+    // listener for latitude, puts the received value into an arrayList of doubles and adds the current
+    // color to another arrayList
+    Latitude.Listener mLatListener = new Latitude.Listener(){
         public void receive(Measurement measurement) {
             final Latitude lati = (Latitude) measurement;
             lat = lati.getValue().doubleValue();
             totalLat.add(lat);
+            errorColors.add(place);
+//            System.out.println(lati);       // for testing
         }
     };
 
+    // same as above
     Longitude.Listener mLongListener = new Longitude.Listener() {
         public void receive(Measurement measurement) {
             final Longitude lg = (Longitude) measurement;
@@ -196,7 +219,7 @@ public class InTransitActivity extends Activity {
         }
     };
 
-
+    // OpenXC command to support and manage the listeners
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
@@ -210,7 +233,6 @@ public class InTransitActivity extends Activity {
 //            mVehicleManager.addListener(AcceleratorPedalPosition.class, mAccelListener);
             mVehicleManager.addListener(Latitude.class, mLatListener);
             mVehicleManager.addListener(Longitude.class, mLongListener);
-            //    System.out.println("after adding listeners");
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -220,7 +242,7 @@ public class InTransitActivity extends Activity {
         }
     };
 
-
+    // actually no idea what this is for
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -231,18 +253,44 @@ public class InTransitActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //if (place == 0) {
-                //    mBackground.setBackgroundResource(R.drawable.happy_driving);
-                //} else {
+
+                // different emojis for different color backgrounds
+                if (place > 204) {
+                    mBackground.setImageResource(R.drawable.scared_face);
+                }
+                if (place > 153 && place < 204) {
+                    mBackground.setImageResource(R.drawable.sad_face);
+                }
+                if (place > 102 && place < 153) {
+                    mBackground.setImageResource(R.drawable.neutral_face);
+                }
+                if (place > 51 && place < 102) {
+                    mBackground.setImageResource(R.drawable.smiling_face);
+                }
+                if (place < 51) {
+                    mBackground.setImageResource(R.drawable.happy_face);
+                }
+
+                // algorithm to get specific color gradient
+
                 if (place > 0 && place < 256) {
                     place--;
                 }
                 if (place > 255) {
                     place = 255;
                 }
-                mBackground.setBackgroundColor(Color.argb(255, red + place, green - place, 0));
-                // System.out.println(place);  test to check the color
-                //            }
+
+                if (place < 128) {
+                    mBackground.setBackgroundColor(Color.argb(255, place * 2, 255, 0));
+                }
+                if (place >= 128) {
+                    mBackground.setBackgroundColor(Color.argb(255, 255, 256 - 2*(place - 127), 0));
+                }
+//                System.out.println(place);  // for testing
+
+//TODO: Why was this modified from the statement below? that one didn't work?
+//                mBackground.setBackgroundColor(Color.argb(255, red + place, green - place, 0));
+
             }
         });
     }
@@ -262,41 +310,34 @@ public class InTransitActivity extends Activity {
                 // removes all the listeners, stops the scripts, etc
                 stopEverything();
 
-                // transfers the map data
-                Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity
-                        .class);
+                // transfers the map data to MapReviewActivity
+                Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity.class);
 
                 transferMapData.putExtra("latitude", totalLat);
                 transferMapData.putExtra("longitude", totalLong);
                 transferMapData.putExtra("ruleLatitude", ruleLat);
                 transferMapData.putExtra("ruleLongitude", ruleLong);
-                //       System.out.println("TotalLat: " + totalLat.toString());
-                //       System.out.println("TotalLong: " + totalLong.toString());
+
+                transferMapData.putExtra("errorNames", errorNames);
+                transferMapData.putExtra("errorValues", errorValues);
+                transferMapData.putExtra("errorColors", errorColors);
+
                 startActivity(transferMapData);
             }
         });
     }
 
+    // test button
     public void testRule() {
         TestButton = (Button) findViewById(R.id.test_Button);
 
         TestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                place = place + 60;
-                System.out.println(place);
-                ruleLat.add(lat);
-                ruleLong.add(lng);
+                setPlace(60, 4, 420); //test values
             }
         });
     }
-
-    //done inside the listeners now
-    /*public void getLocation() {
-        totalLat.add(lat);
-        totalLong.add(lng);
-    }*/
-
 
     // getters and setters
     public static double getEng() {
@@ -315,6 +356,7 @@ public class InTransitActivity extends Activity {
         return accelPosition.getValue().doubleValue();
     }
 
+    //TODO: DO NOT RUN UNTIL SETPLACE IS RESOLVED
     /**
      * Adds <code>newPlace</code> to the <code>place</code> field, but keeps <code>place</code>
      * at an upper limit of 255. setPlace() is called when a violation occurs, so this method
@@ -322,7 +364,14 @@ public class InTransitActivity extends Activity {
      *
      * @param newPlace is the additional value to be added to <code>place</code>
      */
-    public void setPlace(int newPlace) {
+    public void setPlace(int newPlace, int ruleNum, double errorValue) {
+	
+		place = place + newPlace;
+	    ruleLat.add(lat);
+	    ruleLong.add(lng);
+	    errorNames.add(ruleNum);
+	    errorValues.add(errorValue);
+}
         //TODO: I think we should change this from public to private (and just call it within
         // this class)
 
@@ -335,6 +384,14 @@ public class InTransitActivity extends Activity {
             place = Math.min(place + newPlace, 255); // guarantees that place does not exceed 255
         }
     }
+
+    public static void setSpeedBreakTime() { speedBreakTime = globalClock.elapsedRealtime();}
+
+    public static void setEngBreakTime() { engBreakTime = globalClock.elapsedRealtime();}
+
+    public static void setAngleBreakTime() { angleBreakTime = globalClock.elapsedRealtime();}
+
+    public static void setAccelBreakTime() { accelBreakTime = globalClock.elapsedRealtime();}
 
     private void stopEverything() {
         // stops VehicleManager Listeners
