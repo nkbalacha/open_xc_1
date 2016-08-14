@@ -24,7 +24,6 @@ public class BasicRules extends Activity {
      */
     public int ruleMaxEngSpd(double newSpd) {
 
-        System.out.println("RPM  ---  " + newSpd);
         /*
         if rpm is over 4000, return 40 for place addition, otherwise return 0.
          */
@@ -89,8 +88,6 @@ public class BasicRules extends Activity {
             if (val < minAngle) minAngle = val;
             if (val > maxAngle) maxAngle = val;
         }
-
-        System.out.println("Steering  ---  "+(maxAngle - minAngle));
 
         /*
         if angle difference is 90 or greater, clear the queue, and return the severity value

@@ -333,13 +333,6 @@ public class InTransitActivity extends Activity {
             ruleLong.add(lng);
 
             place = Math.min(place + newPlace, 255); // guarantees that place does not exceed 255
-
-            try {
-                wait(10000);
-            } catch (InterruptedException e) {
-                System.out.println("wait method inside setPlace() failed.");
-                e.printStackTrace();
-            }
         }
     }
 
