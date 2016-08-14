@@ -1,76 +1,141 @@
 package com.openxcplatform.openxcstarter;
 
 import android.app.Activity;
-import android.test.InstrumentationTestRunner;
 
+import java.util.ArrayDeque;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class BasicRules extends Activity {
 
-    private double[] angleQueue;
+    /* declaring these variables here because I think it will save memory space to only have
+    them declared once.
+     */
+    private ArrayDeque<Double> steeringQ;  //TODO-spencer: most efficient way to store this queue?
+    private double minAngle;
+    private double maxAngle;
 
-    public BasicRules(){}
-
-    //engSpeed rule
-    public void ruleOne()
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (InTransitActivity.getEng() > 900) {
-                    InTransitActivity.setPlace(20);
-                }
-            }
-        });
+    public BasicRules() {
+        steeringQ = new ArrayDeque<>();
     }
 
-    // vehSpeed rule
-    public void ruleTwo()
-    {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (InTransitActivity.getVeh() > 90) {
-                    InTransitActivity.setPlace(80);
-                }
-            }
-        });
-    }
+    /**
+     * Enforces the maximum engine speed to be 4000 RPM.
+     */
+    public int ruleMaxEngSpd(double newSpd) {
 
-    // SW angle rule
-    public void ruleThree()
-    {
-        angleQueue = new double[4];
-        Timer myTimer = new Timer();
-        myTimer.schedule(new TimerTask()
-        {
-        int i = 0;
-            @Override
-            public void run()
-            {
-                angleQueue[i] = InTransitActivity.getSWAngle();
-                i = (i + 1) % 4;
-                if (angleQueue.length == 4) {
-                    if(limit(angleQueue) > 180) {
-                        InTransitActivity.setPlace(40);
-                    }
-                }
-            }
-        }, 0, 125);
-    }
-
-    public double limit(double[] angles) {
-        double max = 0;
-        for (int m = 0; m < 3; m++) {
-            for (int n = m + 1; n < 4; n++) {
-                if(Math.abs(angles[m] - angles[n]) > max) {
-                    max = Math.abs(angles[m] - angles[n]);
-                }
-            }
+				 if (InTransitActivity.getEng() > 4000) {
+            
         }
-        return max;
+        /*
+        if rpm is over 4000, return 40 for place addition, otherwise return 0.
+         */
+        if (newSpd > 4000) {
+					  InTransitActivity.setPlace(40, 1, InTransitActivity.getEng()); //TODO: this file doesn't need to make calls to setPlace() anymore!
+            InTransitActivity.setEngBreakTime();
+						return 40;
+				}
+        return 0;
     }
 
+    public void ruleMaxAccel() {
+        
+    }
+		
+		/**
+     * Limits the maximum acceleration pedal value to 97.	
+     */
+   public void ruleMaxAccel() {
+	
+			if (InTransitActivity.getAccel() > 97) {
+					InTransitActivity.setPlace(30, 3, InTransitActivity.getAccel());
+					InTransitActivity.setAccelBreakTime();
+			}
+   }
 
+		public void ruleMaxVehSpd() {
+               if (InTransitActivity.getVeh() > 90) {
+                   
+               }
+
+				if (InTransitActivity.getVeh() > 90) {
+            InTransitActivity.setPlace(80);
+						InTransitActivity.setPlace(80, 2, InTransitActivity.getVeh());
+            InTransitActivity.setSpeedBreakTime();
+        }
+		}
+
+    /**
+     * Enforces that the driver should not rotate the steering wheel by 90 degrees or more during
+     * any period of 0.5 seconds. Violation severity is 50 place units.
+     *
+     * This is a rudimentary algorithm. The rule is called slightly less than 10 times a second
+     * (on average 108 millisec between calls), so we will keep a queue of 10 values.
+     * After each call, the oldest value is discarded, and the newly measured steering angle
+     * value is added to the queue.
+     *
+     * Then the maximum and minimum are calculated, and we check if there is a difference of 90
+     * degrees or greater.
+     */
+    public int ruleSteering(double newAngle) {
+        // the mod is used to just take the last 4 digits of the execution time, for convenience
+//        System.out.println(System.currentTimeMillis() % 10000);
+
+        /*
+        Pseudo-code
+
+        if size of queue > 10, return an error
+        == 10, pop first out
+
+        in all cases:
+        add most recent value (parameter) to the queue
+        calculate the max
+        calculate the min
+        calculate the difference (max- min)
+        if > 90, then adjust 'place' accordingly.
+
+         */
+
+        if (steeringQ.size() > 10) {
+            throw new IndexOutOfBoundsException("steering queue has exceeded 10 elements.");
+        }
+        else if (steeringQ.size() == 10){
+            steeringQ.removeLast();
+        }
+
+        steeringQ.addFirst(newAngle);
+        minAngle = newAngle;
+        maxAngle = newAngle;
+
+        for (double val : steeringQ){
+            if (val < minAngle) minAngle = val;
+            if (val > maxAngle) maxAngle = val;
+        }
+
+        /*
+        if angle difference is 90 or greater, clear the queue, and return the severity value
+         */
+        if ((maxAngle - minAngle) >= 90){
+            steeringQ.clear();
+            return 50;
+        }
+        return 0;
+
+    }
+
+    /**
+     * Enforces this situation: if the engine speed is above 3000 RPM, and the accelerator pedal
+     * is pressed in at least 5%, and the steering wheel is rotated at least 60 deg from center
+     * in either direction, the driver has committed a violation.
+     */
+
+    public void ruleSpeedSteering() {
+				if (InTransitActivity.getEng() > 3000
+								&& (InTransitActivity.getSWAngle() > 60 || InTransitActivity
+								.getSWAngle() < -60)
+								&& InTransitActivity.getAccel() > 5) {
+						InTransitActivity.setPlace(100, 4, 360); // temp errorValue
+						InTransitActivity.setAngleBreakTime();
+				}
+    }
 }
