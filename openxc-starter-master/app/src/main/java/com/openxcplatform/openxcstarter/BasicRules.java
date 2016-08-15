@@ -22,62 +22,77 @@ public class BasicRules extends Activity {
     /**
      * Enforces the maximum engine speed to be 4000 RPM.
      */
-    public int ruleMaxEngSpd(double newSpd) {
+    public double ruleMaxEngSpd(double newSpd) {
 
-				 if (InTransitActivity.getEng() > 4000) {
-            
-        }
         /*
         if rpm is over 4000, return 40 for place addition, otherwise return 0.
          */
         if (newSpd > 4000) {
-					  InTransitActivity.setPlace(40, 1, InTransitActivity.getEng()); //TODO: this file doesn't need to make calls to setPlace() anymore!
+//					  InTransitActivity.setPlace(40, 1, InTransitActivity.getEng());
+// TODO-spencer: this file doesn't need to make calls to setPlace() anymore
             InTransitActivity.setEngBreakTime();
-						return 40;
-				}
+            //TODO-spencer: make sure the above statement still works as needed
+            return newSpd;
+        }
         return 0;
     }
 
-    public void ruleMaxAccel() {
-        
-    }
-		
-		/**
-     * Limits the maximum acceleration pedal value to 97.	
+    /**
+     * Limits the maximum acceleration pedal value to 97.
+     *
+     * @param newAccel latest acceleration value polled from the vehicle
+     * @return the acceleration value if the rule is broken, or zero otherwise.
      */
-   public void ruleMaxAccel() {
-	
-			if (InTransitActivity.getAccel() > 97) {
-					InTransitActivity.setPlace(30, 3, InTransitActivity.getAccel());
-					InTransitActivity.setAccelBreakTime();
-			}
-   }
+    public double ruleMaxAccel(double newAccel) {
 
-		public void ruleMaxVehSpd() {
-               if (InTransitActivity.getVeh() > 90) {
-                   
-               }
+//        if (InTransitActivity.getAccel() > 97) {
+//            InTransitActivity.setPlace(30, 3, InTransitActivity.getAccel());
+//            InTransitActivity.setAccelBreakTime();
+//        }
 
-				if (InTransitActivity.getVeh() > 90) {
-            InTransitActivity.setPlace(80);
-						InTransitActivity.setPlace(80, 2, InTransitActivity.getVeh());
-            InTransitActivity.setSpeedBreakTime();
+        if (newAccel > 97) {
+            InTransitActivity.setAccelBreakTime();
+            return newAccel;
         }
-		}
+        return 0;
+    }
+
+    /**
+     * Limits the maximum vehicle speed value to 90 km/hr.
+     *
+     * @param newSpeed the latest vehicle speed (km/hr) polled from the vehicle.
+     * @return the vehicle speed value that broke the rule, or zero otherwise.
+     */
+    public double ruleMaxVehSpd(double newSpeed) {
+
+//        if (InTransitActivity.getVeh() > 90) {
+//            InTransitActivity.setPlace(80);
+//            InTransitActivity.setPlace(80, 2, InTransitActivity.getVeh());
+//            InTransitActivity.setSpeedBreakTime();
+//        }
+
+        if (newSpeed > 90) {
+            InTransitActivity.setSpeedBreakTime();
+            return newSpeed;
+        }
+
+        //rule not broke, return zero.
+        return 0;
+    }
 
     /**
      * Enforces that the driver should not rotate the steering wheel by 90 degrees or more during
      * any period of 0.5 seconds. Violation severity is 50 place units.
-     *
+     * <p/>
      * This is a rudimentary algorithm. The rule is called slightly less than 10 times a second
      * (on average 108 millisec between calls), so we will keep a queue of 10 values.
      * After each call, the oldest value is discarded, and the newly measured steering angle
      * value is added to the queue.
-     *
+     * <p/>
      * Then the maximum and minimum are calculated, and we check if there is a difference of 90
      * degrees or greater.
      */
-    public int ruleSteering(double newAngle) {
+    public double ruleSteering(double newAngle) {
         // the mod is used to just take the last 4 digits of the execution time, for convenience
 //        System.out.println(System.currentTimeMillis() % 10000);
 
@@ -98,8 +113,7 @@ public class BasicRules extends Activity {
 
         if (steeringQ.size() > 10) {
             throw new IndexOutOfBoundsException("steering queue has exceeded 10 elements.");
-        }
-        else if (steeringQ.size() == 10){
+        } else if (steeringQ.size() == 10) {
             steeringQ.removeLast();
         }
 
@@ -107,17 +121,18 @@ public class BasicRules extends Activity {
         minAngle = newAngle;
         maxAngle = newAngle;
 
-        for (double val : steeringQ){
+        for (double val : steeringQ) {
             if (val < minAngle) minAngle = val;
             if (val > maxAngle) maxAngle = val;
         }
 
         /*
-        if angle difference is 90 or greater, clear the queue, and return the severity value
+        if angle difference is 90 or greater, clear the queue, and return the that angle difference.
          */
-        if ((maxAngle - minAngle) >= 90){
+        if ((maxAngle - minAngle) >= 90) {
             steeringQ.clear();
-            return 50;
+            InTransitActivity.setAngleBreakTime();
+            return (maxAngle - minAngle);
         }
         return 0;
 
@@ -127,15 +142,21 @@ public class BasicRules extends Activity {
      * Enforces this situation: if the engine speed is above 3000 RPM, and the accelerator pedal
      * is pressed in at least 5%, and the steering wheel is rotated at least 60 deg from center
      * in either direction, the driver has committed a violation.
+     *
+     * @return the engine speed (double) in rpm at which this infraction occurred.
      */
 
-    public void ruleSpeedSteering() {
-				if (InTransitActivity.getEng() > 3000
-								&& (InTransitActivity.getSWAngle() > 60 || InTransitActivity
-								.getSWAngle() < -60)
-								&& InTransitActivity.getAccel() > 5) {
-						InTransitActivity.setPlace(100, 4, 360); // temp errorValue
-						InTransitActivity.setAngleBreakTime();
-				}
+    public double ruleSpeedSteering(double engVal, double accelVal, double steerVal) {
+        if (engVal > 3000
+                && (steerVal > 60 || steerVal < -60)
+                && accelVal > 5) {
+//            InTransitActivity.setPlace(100, 4, 360); // temp errorValue
+            InTransitActivity.setAngleBreakTime();
+
+            return engVal;
+        }
+
+        //rule not broken, return zero.
+        return 0;
     }
 }

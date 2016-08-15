@@ -74,7 +74,13 @@ public class InTransitActivity extends Activity {
     private static long accelBreakTime = 0;
 
     private int errorMargin = 30000;
-    private static SystemClock globalClock;
+    private static SystemClock globalClock; //TODO: don't need instantiation of SystemClock
+
+    static final int MAX_ENG = 1;
+    static final int MAX_ACCEL = 2;
+    static final int MAX_VEH = 3;
+    static final int STEER = 4;
+    static final int SPEED_STEER = 5;
 
     // when this activity is created, we set the view to the initial green gradient
     @Override
@@ -89,8 +95,7 @@ public class InTransitActivity extends Activity {
         rulesChecked = RulesFragment.getRulesChecked();
 
         // script that changes the gradient from red to green
-        myTimer.schedule(new TimerTask()
-        {
+        myTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 redToGreen();
@@ -140,16 +145,18 @@ public class InTransitActivity extends Activity {
      listener for vehicle speed, includes a check for the mistake margin (you can only break this
       rule once every 30 seconds), then checks for a custom vs standard ruleset
       */
+    //TODO: why is this listener 'never used'?
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             vehSpeed = (VehicleSpeed) measurement;
 //            System.out.println(vehSpeed.getValue().toString());       // prints are for debugging
-//            System.out.println("Time to next rule broken: " + (speedBreakTime + errorMargin - globalClock.elapsedRealtime()));
+//            System.out.println("Time to next rule broken: " + (speedBreakTime + errorMargin -
+// globalClock.elapsedRealtime()));
             if (globalClock.elapsedRealtime() > speedBreakTime + errorMargin) {
                 if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
                     newRules.customMaxVehSpd(RulesFragment.getvSMax());
                 } else {
-                    standardRules.ruleMaxVehSpd();
+                    setPlace(MAX_VEH, standardRules.ruleMaxVehSpd(getVeh()));
                 }
             }
         }
@@ -159,14 +166,14 @@ public class InTransitActivity extends Activity {
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
 
-			engSpeed = (EngineSpeed) measurement;
+            engSpeed = (EngineSpeed) measurement;
+            //TODO: don't need globalClock instantiation. just use SystemClock class
             if (globalClock.elapsedRealtime() > engBreakTime + errorMargin) {
-                if (rulesChecked == true && RulesFragment.getEngMax() != 0) {
+                if (rulesChecked && RulesFragment.getEngMax() != 0) {
                     newRules.customMaxEngSpd(RulesFragment.getEngMax());
                 } else {
-                    standardRules.ruleMaxEngSpd();
-                    standardRules.ruleSpeedSteering();
-                    setPlace(standardRules.ruleMaxEngSpd(getEng()));
+//                    standardRules.ruleMaxEngSpd();
+                    setPlace(MAX_ENG, standardRules.ruleMaxEngSpd(getEng()));
                 }
             }
         }
@@ -180,11 +187,11 @@ public class InTransitActivity extends Activity {
                 if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
                     newRules.customMaxAccel(RulesFragment.getAccelMax());
                 } else {
-                    standardRules.ruleMaxAccel();
+                    setPlace(MAX_ACCEL, standardRules.ruleMaxAccel(getAccel()));
                 }
             }
         }
-     };
+    };
 
     // same as above
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
@@ -193,14 +200,17 @@ public class InTransitActivity extends Activity {
             if (globalClock.elapsedRealtime() > angleBreakTime + errorMargin) {
                 swAngle = (SteeringWheelAngle) measurement;
 //                standardRules.ruleSteering();	//TODO: comment this line out.
-                setPlace(standardRules.ruleSteering(getSWAngle()));
+                setPlace(STEER, standardRules.ruleSteering(getSWAngle()));
+                setPlace(SPEED_STEER,
+                        standardRules.ruleSpeedSteering(getEng(), getAccel(), getSWAngle()));
             }
         }
     };
 
-    // listener for latitude, puts the received value into an arrayList of doubles and adds the current
+    // listener for latitude, puts the received value into an arrayList of doubles and adds the
+    // current
     // color to another arrayList
-    Latitude.Listener mLatListener = new Latitude.Listener(){
+    Latitude.Listener mLatListener = new Latitude.Listener() {
         public void receive(Measurement measurement) {
             final Latitude lati = (Latitude) measurement;
             lat = lati.getValue().doubleValue();
@@ -284,7 +294,8 @@ public class InTransitActivity extends Activity {
                     mBackground.setBackgroundColor(Color.argb(255, place * 2, 255, 0));
                 }
                 if (place >= 128) {
-                    mBackground.setBackgroundColor(Color.argb(255, 255, 256 - 2*(place - 127), 0));
+                    mBackground.setBackgroundColor(Color.argb(255, 255, 256 - 2 * (place - 127),
+                            0));
                 }
 //                System.out.println(place);  // for testing
 
@@ -311,7 +322,8 @@ public class InTransitActivity extends Activity {
                 stopEverything();
 
                 // transfers the map data to MapReviewActivity
-                Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity.class);
+                Intent transferMapData = new Intent(InTransitActivity.this, MapReviewActivity
+                        .class);
 
                 transferMapData.putExtra("latitude", totalLat);
                 transferMapData.putExtra("longitude", totalLong);
@@ -334,7 +346,7 @@ public class InTransitActivity extends Activity {
         TestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setPlace(60, 4, 420); //test values
+                setPlace(STEER, 420); //test values
             }
         });
     }
@@ -357,41 +369,83 @@ public class InTransitActivity extends Activity {
     }
 
     //TODO: DO NOT RUN UNTIL SETPLACE IS RESOLVED
+
     /**
      * Adds <code>newPlace</code> to the <code>place</code> field, but keeps <code>place</code>
      * at an upper limit of 255. setPlace() is called when a violation occurs, so this method
      * also adds a latitude/longitude pair to the list of violation locations.
      *
-     * @param newPlace is the additional value to be added to <code>place</code>
+     * @param ruleNum    is an integer corresponding to one of the rules.
+     * @param errorValue is the (double) value that broke the rule, or ZERO if the rule was not
+     *                   broken.
      */
-    public void setPlace(int newPlace, int ruleNum, double errorValue) {
-	
-		place = place + newPlace;
-	    ruleLat.add(lat);
-	    ruleLong.add(lng);
-	    errorNames.add(ruleNum);
-	    errorValues.add(errorValue);
-}
-        //TODO: I think we should change this from public to private (and just call it within
-        // this class)
+    public void setPlace(int ruleNum, double errorValue) {
 
-        //TODO-spencer: if newPlace is 0, this method does nothing. Can this be simplified
-        // outside of this method?
-        if (newPlace > 0){
+//        place = place + newPlace;
+//	    ruleLat.add(lat);
+//	    ruleLong.add(lng);
+//	    errorNames.add(ruleNum);
+//	    errorValues.add(errorValue);
+
+    //TODO: I think we should change this from public to private (and just call it within
+    // this class)
+
+    //TODO-spencer: if newPlace is 0, this method does nothing. Can this be simplified
+    // outside of this method?
+
+        if (errorValue > 0) {
+            int newPlace;
             ruleLat.add(lat);
             ruleLong.add(lng);
+            errorNames.add(ruleNum);
+            errorValues.add(errorValue);
 
-            place = Math.min(place + newPlace, 255); // guarantees that place does not exceed 255
+            /* This is a switch statement that assigns different place penalties for each rule
+             */
+            switch (ruleNum){
+                case MAX_ENG:
+                    newPlace = 40;
+                    break;
+                case MAX_ACCEL:
+                    newPlace = 30;
+                    break;
+                case MAX_VEH:
+                    newPlace = 80;
+                    break;
+                case STEER:
+                    newPlace = 50;
+                    break;
+                case SPEED_STEER:
+                    newPlace = 100;
+                    break;
+
+                //the case below is just to catch an unexpected ruleNum value passed in.
+                default:
+                    System.out.println("switch statement in setPlace failed!");
+                    throw new IllegalArgumentException();
+            }
+
+            // guarantees that place does not exceed 255
+            place = Math.min(place + newPlace, 255);
         }
+
+}
+
+    public static void setSpeedBreakTime() {
+        speedBreakTime = globalClock.elapsedRealtime();
     }
 
-    public static void setSpeedBreakTime() { speedBreakTime = globalClock.elapsedRealtime();}
+    public static void setEngBreakTime() {
+        engBreakTime = globalClock.elapsedRealtime();
+    }
 
-    public static void setEngBreakTime() { engBreakTime = globalClock.elapsedRealtime();}
+    public static void setAngleBreakTime() {
+        angleBreakTime = globalClock.elapsedRealtime();
+    }
 
-    public static void setAngleBreakTime() { angleBreakTime = globalClock.elapsedRealtime();}
-
-    public static void setAccelBreakTime() { accelBreakTime = globalClock.elapsedRealtime();}
+    public static void setAccelBreakTime() {
+        accelBreakTime = globalClock.elapsedRealtime();
+    }
 
     private void stopEverything() {
         // stops VehicleManager Listeners
@@ -399,12 +453,12 @@ public class InTransitActivity extends Activity {
             Log.i(TAG, "Unbinding from Vehicle Manager");
             mVehicleManager.removeListener(EngineSpeed.class,
                     mEngineSpeedListener);
-//            mVehicleManager.removeListener(VehicleSpeed.class,
-//                    mVSpeedListener);
+            mVehicleManager.removeListener(VehicleSpeed.class,
+                    mVSpeedListener);
             mVehicleManager.removeListener(SteeringWheelAngle.class,
                     mWheelAngleListener);
-//            mVehicleManager.removeListener(AcceleratorPedalPosition.class,
-//                    mAccelListener);
+            mVehicleManager.removeListener(AcceleratorPedalPosition.class,
+                    mAccelListener);
             mVehicleManager.removeListener(Latitude.class, mLatListener);
             mVehicleManager.removeListener(Longitude.class, mLongListener);
 
