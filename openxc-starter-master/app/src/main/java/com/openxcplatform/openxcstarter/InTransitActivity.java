@@ -63,7 +63,6 @@ public class InTransitActivity extends Activity {
 
     // misc variables, remind me to sort later
     private BasicRules standardRules = new BasicRules();
-    private CustomRules newRules = new CustomRules();
     Timer myTimer = new Timer();
     public Button TestButton;    //remove in final presentation
     public Button MapReviewButton;
@@ -92,7 +91,7 @@ public class InTransitActivity extends Activity {
         mBackground = (ImageView) findViewById(R.id.overlay_layer);
 
         // initial check for custom rules
-        rulesChecked = RulesFragment.getRulesChecked();
+        //rulesChecked = RulesFragment.getRulesChecked();
 
         // script that changes the gradient from red to green
         myTimer.schedule(new TimerTask() {
@@ -135,11 +134,10 @@ public class InTransitActivity extends Activity {
 //            System.out.println("Time to next rule broken: " + (speedBreakTime + errorMargin -
 // globalClock.elapsedRealtime()));
             if (SystemClock.elapsedRealtime() > speedBreakTime + errorMargin) {
-                if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
-                    setPlace(MAX_VEH, newRules.customMaxVehSpd(getVeh(), RulesFragment.getvSMax()));
-                } else {
+
+
                     setPlace(MAX_VEH, standardRules.ruleMaxVehSpd(getVeh()));
-                }
+
             }
         }
     };
@@ -149,11 +147,8 @@ public class InTransitActivity extends Activity {
         public void receive(Measurement measurement) {
             engSpeed = (EngineSpeed) measurement;
             if (SystemClock.elapsedRealtime() > engBreakTime + errorMargin) {
-                if (rulesChecked && RulesFragment.getEngMax() != 0) {
-                    setPlace(MAX_ENG, newRules.customMaxEngSpd(getEng(), RulesFragment.getEngMax()));
-                } else {
+
                     setPlace(MAX_ENG, standardRules.ruleMaxEngSpd(getEng()));
-                }
             }
         }
     };
@@ -163,11 +158,9 @@ public class InTransitActivity extends Activity {
         public void receive(Measurement measurement) {
             accelPosition = (AcceleratorPedalPosition) measurement;
             if (SystemClock.elapsedRealtime() > accelBreakTime + errorMargin) {
-                if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
-                    setPlace(MAX_ACCEL, newRules.customMaxAccel(getAccel(), RulesFragment.getAccelMax()));
-                } else {
+
                     setPlace(MAX_ACCEL, standardRules.ruleMaxAccel(getAccel()));
-                }
+
             }
         }
     };
