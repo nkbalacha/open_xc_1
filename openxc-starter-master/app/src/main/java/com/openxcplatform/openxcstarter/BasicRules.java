@@ -31,6 +31,7 @@ public class BasicRules extends Activity {
 // TODO-spencer: this file doesn't need to make calls to setPlace() anymore
             InTransitActivity.setEngBreakTime();
             //TODO-spencer: make sure the above statement still works as needed
+            System.out.println("Broke eng rule");
             return newSpd;
         }
         return 0;
@@ -43,14 +44,9 @@ public class BasicRules extends Activity {
      * @return the acceleration value if the rule is broken, or zero otherwise.
      */
     public double ruleMaxAccel(double newAccel) {
-
-//        if (InTransitActivity.getAccel() > 97) {
-//            InTransitActivity.setPlace(30, 3, InTransitActivity.getAccel());
-//            InTransitActivity.setAccelBreakTime();
-//        }
-
         if (newAccel > 55) {
             InTransitActivity.setAccelBreakTime();
+            System.out.println("Broke accel rule");
             return newAccel;
         }
         return 0;
@@ -63,16 +59,9 @@ public class BasicRules extends Activity {
      * @return the vehicle speed value that broke the rule, or zero otherwise.
      */
     public double ruleMaxVehSpd(double newSpeed) {
-
-//        if (InTransitActivity.getVeh() > 90) {
-//            InTransitActivity.setPlace(80);
-//            InTransitActivity.setPlace(80, 2, InTransitActivity.getVeh());
-//            InTransitActivity.setSpeedBreakTime();
-//        }
-
         if (newSpeed > 40) {
             InTransitActivity.setSpeedBreakTime();
-            System.out.println("Broke rule 1");
+            System.out.println("Broke speed rule");
             return newSpeed;
         }
 

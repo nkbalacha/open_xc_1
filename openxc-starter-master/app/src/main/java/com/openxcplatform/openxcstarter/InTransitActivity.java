@@ -148,6 +148,7 @@ public class InTransitActivity extends Activity {
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
             engSpeed = (EngineSpeed) measurement;
+            System.out.println(engSpeed.getValue().toString());       // prints are for debugging
             if (SystemClock.elapsedRealtime() > engBreakTime + errorMargin) {
                 if (rulesChecked && RulesFragment.getEngMax() != 0) {
                     setPlace(MAX_ENG, newRules.customMaxEngSpd(getEng(), RulesFragment.getEngMax()));
@@ -162,6 +163,7 @@ public class InTransitActivity extends Activity {
     AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
             accelPosition = (AcceleratorPedalPosition) measurement;
+            System.out.println(accelPosition.getValue().toString());       // prints are for debugging
             if (SystemClock.elapsedRealtime() > accelBreakTime + errorMargin) {
                 if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
                     setPlace(MAX_ACCEL, newRules.customMaxAccel(getAccel(), RulesFragment.getAccelMax()));
@@ -275,7 +277,7 @@ public class InTransitActivity extends Activity {
                     mBackground.setBackgroundColor(Color.argb(255, 255, 256 - 2 * (place - 127),
                             0));
                 }
-                System.out.println(place);  // for testing
+                System.out.println("place: " + place);  // for testing
             }
         });
     }
