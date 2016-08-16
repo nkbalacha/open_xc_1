@@ -150,6 +150,7 @@ public class InTransitActivity extends Activity {
             engSpeed = (EngineSpeed) measurement;
             if (SystemClock.elapsedRealtime() > engBreakTime + errorMargin) {
                 if (rulesChecked && RulesFragment.getEngMax() != 0) {
+                    System.out.println("engine speed ----- "+getEng());
                     setPlace(MAX_ENG, newRules.customMaxEngSpd(getEng(), RulesFragment.getEngMax()));
                 } else {
                     setPlace(MAX_ENG, standardRules.ruleMaxEngSpd(getEng()));
@@ -327,10 +328,18 @@ public class InTransitActivity extends Activity {
 
     // getters and setters
     public static double getVeh() {
+
+        if (vehSpeed == null) return -100;
         return vehSpeed.getValue().doubleValue();
     }
 
+    /**
+     *
+     * @return the engine speed (double) or a negative value if engSpeed is null.
+     */
     public static double getEng() {
+        if (engSpeed == null) return -100;
+
         return engSpeed.getValue().doubleValue();
     }
 
