@@ -46,10 +46,10 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private Button homeButton;
 
     // outputs for mistakes made in the error markers
-    private final String ruleOne = "Exceeded max vehicle speed";
-    private final String ruleTwo = "Exceeded max engine speed";
-    private final String ruleThree = "Accelerated too quickly";
-    private final String ruleFour = "Turned too quickly";
+    private final String ruleVeh = "Exceeded max vehicle speed";
+    private final String ruleEng = "Exceeded max engine speed";
+    private final String ruleAccel = "Accelerated too quickly";
+    private final String ruleSteering = "Turned too quickly";
 
     // on activity creation, gets and sets the view to a google map, then starts the home button script
     @Override
@@ -122,13 +122,13 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         for(int i = 0; i < tRuleLat.size(); i++) {
             String ruleBroken;
             switch (tErrorNames.get(i)) {
-                case 1: ruleBroken = ruleOne;
+                case InTransitActivity.MAX_ACCEL: ruleBroken = ruleAccel;
                         break;
-                case 2: ruleBroken = ruleTwo;
+                case InTransitActivity.MAX_ENG: ruleBroken = ruleEng;
                         break;
-                case 3: ruleBroken = ruleThree;
+                case InTransitActivity.MAX_VEH: ruleBroken = ruleVeh;
                         break;
-                case 4: ruleBroken = ruleFour;
+                case InTransitActivity.STEER: ruleBroken = ruleSteering;
                         break;
                 default: ruleBroken = "You fucked up";
                         break;
@@ -144,6 +144,13 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         System.out.println("Longitude: " + tRuleLong.toString());
         System.out.println("Broken rule numbers: " + tErrorNames.toString());
         System.out.println("Broken rule values: " + tErrorValues.toString());
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(MapReviewActivity.this, StartActivity.class));
+        finish();
     }
 
     // script for the home button in the top left

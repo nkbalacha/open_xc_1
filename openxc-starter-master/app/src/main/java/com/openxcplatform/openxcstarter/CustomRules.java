@@ -6,25 +6,28 @@ public class CustomRules extends Activity {
 
     public CustomRules() {}
 
-    public void customMaxVehSpd(int maxSpd) {
-        if (InTransitActivity.getVeh() > maxSpd) {
-            InTransitActivity.setPlace(80, 1, InTransitActivity.getVeh());
+    public double customMaxVehSpd(double newSpeed, int maxSpd) {
+        if (newSpeed > maxSpd) {
             InTransitActivity.setSpeedBreakTime();
+            return newSpeed;
         }
+        return 0;
     }
 
-    public void customMaxEngSpd(int maxEngSpd) {
-        if (InTransitActivity.getEng() > maxEngSpd) {
-            InTransitActivity.setPlace(40, 2, InTransitActivity.getEng());
+    public double customMaxEngSpd(double newSpeed, int maxEngSpd) {
+        if (newSpeed > maxEngSpd) {
             InTransitActivity.setEngBreakTime();
+            return newSpeed;
         }
+        return 0;
     }
 
-    public void customMaxAccel(int maxAccel) {
-        if (InTransitActivity.getAccel() > maxAccel) {
-            InTransitActivity.setPlace(40, 3, InTransitActivity.getAccel());
-            InTransitActivity.setAccelBreakTime();
+    public double customMaxAccel(double newSpeed, int maxAccel) {
+        if (newSpeed > maxAccel) {
+            InTransitActivity.setEngBreakTime();
+            return newSpeed;
         }
+        return 0;
     }
 
 }

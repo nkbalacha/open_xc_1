@@ -27,8 +27,7 @@ public class BasicRules extends Activity {
         /*
         if rpm is over 4000, return 40 for place addition, otherwise return 0.
          */
-        if (newSpd > 4000) {
-//					  InTransitActivity.setPlace(40, 1, InTransitActivity.getEng());
+        if (newSpd > 2200) {
 // TODO-spencer: this file doesn't need to make calls to setPlace() anymore
             InTransitActivity.setEngBreakTime();
             //TODO-spencer: make sure the above statement still works as needed
@@ -50,7 +49,7 @@ public class BasicRules extends Activity {
 //            InTransitActivity.setAccelBreakTime();
 //        }
 
-        if (newAccel > 97) {
+        if (newAccel > 55) {
             InTransitActivity.setAccelBreakTime();
             return newAccel;
         }
@@ -71,8 +70,9 @@ public class BasicRules extends Activity {
 //            InTransitActivity.setSpeedBreakTime();
 //        }
 
-        if (newSpeed > 90) {
+        if (newSpeed > 40) {
             InTransitActivity.setSpeedBreakTime();
+            System.out.println("Broke rule 1");
             return newSpeed;
         }
 
@@ -150,8 +150,7 @@ public class BasicRules extends Activity {
         if (engVal > 3000
                 && (steerVal > 60 || steerVal < -60)
                 && accelVal > 5) {
-//            InTransitActivity.setPlace(100, 4, 360); // temp errorValue
-            InTransitActivity.setAngleBreakTime();
+            //InTransitActivity.setAngleBreakTime();
 
             return engVal;
         }
