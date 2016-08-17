@@ -111,7 +111,7 @@ public class InTransitActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        stopEverything();  //unbinds everything, we may want to remove this for the wishlist goal
+    //    stopEverything(); 
     }
 
     // when the app is resumed, start everything
