@@ -111,7 +111,7 @@ public class InTransitActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        stopEverything();  //unbinds everything, we may want to remove this for the wishlist goal
+        //stopEverything();  //unbinds everything, we may want to remove this for the wishlist goal
     }
 
     // when the app is resumed, start everything
@@ -232,7 +232,7 @@ public class InTransitActivity extends Activity {
         }
     };
 
-    // actually no idea what this is for
+    // happens after onCreate and before onResume
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
