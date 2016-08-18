@@ -45,7 +45,10 @@ public class StartActivity extends AppCompatActivity {
                         fragment = new RulesFragment();
                         break;
                     case 2:
-                        fragment = new MyTripsFragment();
+                        fragment = new RulesFragment();
+                        Intent changePage = new Intent(StartActivity.this, MyTripsActivity.class);
+
+                        startActivity(changePage);
                         break;
                     case 3:
                         fragment = new StatsFragment();
