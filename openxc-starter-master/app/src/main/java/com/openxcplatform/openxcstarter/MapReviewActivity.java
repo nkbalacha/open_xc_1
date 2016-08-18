@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -55,6 +56,10 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private final String ruleAccel = "Accelerated too quickly";
     private final String ruleSteering = "Turned too quickly";
     private final String ruleSpeedSteer = "Started drifting";
+
+    private Button saveButton;
+    String tripInput = "tLat: ";
+    String saveName = "";
 
     // on activity creation, gets and sets the view to a google map, then starts the home button script
     @Override
@@ -193,6 +198,8 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
         }*/
 
+        saveTrip();
+
         System.out.println("Latitudes: " + tRuleLat.toString());        // for debugging
         System.out.println("Longitude: " + tRuleLong.toString());
         System.out.println("Broken rule numbers: " + tErrorNames.toString());
@@ -216,6 +223,64 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 Intent changePage = new Intent(MapReviewActivity.this, StartActivity.class);
 
                 startActivity(changePage);
+            }
+        });
+    }
+    public void saveTrip() {
+        saveButton = (Button) findViewById(R.id.but_save);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // so we need to store: tLat, tLong, tRuleLat, tRuleLong, tErrorNames, tErrorValues, tErrorColors
+                for (Double i : tLat) {
+                    tripInput = tripInput + i.toString() + " ";
+                }
+                tripInput = tripInput + "\ntLong: ";
+
+                for (Double i : tLong) {
+                    tripInput = tripInput + i.toString() + " ";
+                }
+                tripInput = tripInput + "\ntRuleLat: ";
+
+                for (Double i : tRuleLat) {
+                    tripInput = tripInput + i.toString() + " ";
+                }
+                tripInput = tripInput + "\ntRuleLong: ";
+
+                for (Double i : tRuleLong) {
+                    tripInput = tripInput + i.toString() + " ";
+                }
+                tripInput = tripInput + "\ntErrorNames: ";
+
+                for (int i : tErrorNames) {
+                    tripInput = tripInput + i + " ";
+                }
+                tripInput = tripInput + "\ntErrorValues: ";
+
+                for (Double i : tErrorValues) {
+                    tripInput = tripInput + i.toString() + " ";
+                }
+                tripInput = tripInput + "\ntErrorColors: ";
+
+                for (int i : tErrorColors) {
+                    tripInput = tripInput + i + " ";
+                }
+                EditText saveNameInput = (EditText) findViewById(R.id.saveName);
+                saveName = saveNameInput.getText().toString();
+                tripInput = "test test test test test";
+                System.out.println(tripInput);
+
+
+                Intent transferMapData = new Intent(MapReviewActivity.this, MyTripsActivity.class);
+                transferMapData.putExtra("tripData", tripInput);
+                transferMapData.putExtra("tripName", saveName);
+                transferMapData.putExtra("bet", 1);
+
+                // reset for the next save
+                tripInput = "tLat: ";
+                saveName = "";
+
+                startActivity(transferMapData);
             }
         });
     }

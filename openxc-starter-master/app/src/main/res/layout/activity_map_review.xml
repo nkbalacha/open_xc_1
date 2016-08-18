@@ -19,4 +19,20 @@
         android:background="@drawable/home_symbol"
         android:scaleType="fitCenter" />
 
+    <Button
+        android:id="@+id/but_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:text="Save Trip"/>
+
+    <EditText
+        android:id="@+id/saveName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="trip name"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/but_save"/>
+
 </RelativeLayout>
