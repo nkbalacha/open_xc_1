@@ -329,14 +329,20 @@ public class InTransitActivity extends Activity {
 
     // getters and setters
     public static double getVeh() {
+
         return vehSpeed.getValue().doubleValue();
     }
 
     public static double getEng() {
+
+        if (engSpeed == null) return -100.0;
+
+        else
         return engSpeed.getValue().doubleValue();
     }
 
     public static double getSWAngle() {
+
         return swAngle.getValue().doubleValue();
     }
 
