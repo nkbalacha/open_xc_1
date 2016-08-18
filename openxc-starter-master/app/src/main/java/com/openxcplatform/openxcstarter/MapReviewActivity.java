@@ -235,7 +235,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 }
                 EditText saveNameInput = (EditText) findViewById(R.id.saveName);
                 saveName = saveNameInput.getText().toString();
-                tripInput = "test test test test test";
+
                 System.out.println(tripInput);
 
 
