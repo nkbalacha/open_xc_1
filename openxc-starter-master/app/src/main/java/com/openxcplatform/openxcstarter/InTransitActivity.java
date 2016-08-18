@@ -335,7 +335,10 @@ public class InTransitActivity extends Activity {
 
     public static double getEng() {
 
-        if (engSpeed == null) return -100.0;
+        if (engSpeed == null){
+            System.out.println("engine speed is null.");
+            return 0.0;
+        }
 
         else
         return engSpeed.getValue().doubleValue();
@@ -347,6 +350,10 @@ public class InTransitActivity extends Activity {
     }
 
     public static double getAccel() {
+        if (accelPosition == null){
+            System.out.println("accelerator position is null.");
+            return 0.0;
+        }
         return accelPosition.getValue().doubleValue();
     }
 
