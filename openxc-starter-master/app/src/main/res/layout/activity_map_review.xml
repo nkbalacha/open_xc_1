@@ -19,4 +19,29 @@
         android:background="@drawable/home_symbol"
         android:scaleType="fitCenter" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save trip"
+        android:id="@+id/but_save"
+        android:layout_alignBottom="@+id/but_home"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test save"
+        android:id="@+id/but_testSave"
+        android:layout_below="@+id/but_save"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="41dp" />
+
+    <EditText
+        android:id="@+id/saveName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/but_save"
+        android:hint="Trip name" />
+
 </RelativeLayout>

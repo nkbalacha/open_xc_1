@@ -6,10 +6,12 @@ import android.graphics.Color;
 import android.location.Criteria;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -23,6 +25,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,12 +57,18 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
 
     // button in top left that takes you back to home screen
     private Button homeButton;
+    private Button saveButton;
+    private Button testSaveButton;
 
     // outputs for mistakes made in the error markers
     private final String ruleVeh = "Exceeded max vehicle speed";
     private final String ruleEng = "Exceeded max engine speed";
     private final String ruleAccel = "Accelerated too quickly";
     private final String ruleSteering = "Turned too quickly";
+
+    FileOutputStream fOS;
+    String tripInput = "tLat: ";
+    String saveName = "";
 
     // on activity creation, gets and sets the view to a google map, then starts the home button script
     @Override
@@ -64,6 +79,8 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         goToHome();
+        saveTrip();
+        loadSavedTrip();
     }
 
     // when the map is initialized, get all the relevant data for polylines/error markers from
@@ -162,33 +179,6 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
         }
 
-        /*for (int i = 0; i < tRuleLat.size(); i++) {
-            String ruleBroken;
-            switch (tErrorNames.get(i)) {
-                case InTransitActivity.MAX_ACCEL:
-                    ruleBroken = ruleAccel;
-                    break;
-                case InTransitActivity.MAX_ENG:
-                    ruleBroken = ruleEng;
-                    break;
-                case InTransitActivity.MAX_VEH:
-                    ruleBroken = ruleVeh;
-                    break;
-                case InTransitActivity.STEER:
-                    ruleBroken = ruleSteering;
-                    break;
-                default:
-                    ruleBroken = "You fucked up";
-                    break;
-            }
-
-            // adding error markers to the polylines
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i)))
-                    .title(ruleBroken + ": " + tErrorValues.get(i).toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
-        }*/
-
         System.out.println("Latitudes: " + tRuleLat.toString());        // for debugging
         System.out.println("Longitude: " + tRuleLong.toString());
         System.out.println("Broken rule numbers: " + tErrorNames.toString());
@@ -212,6 +202,85 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 Intent changePage = new Intent(MapReviewActivity.this, StartActivity.class);
 
                 startActivity(changePage);
+            }
+        });
+    }
+
+    public void saveTrip() {
+        saveButton = (Button) findViewById(R.id.but_save);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // so we need to store: tLat, tLong, tRuleLat, tRuleLong, tErrorNames, tErrorValues, tErrorColors
+                for (Double i : tLat) { tripInput = tripInput + i.toString() + " ";}
+                tripInput = tripInput + "\ntLong: ";
+
+                for (Double i : tLong) { tripInput = tripInput + i.toString() + " ";}
+                tripInput = tripInput + "\ntRuleLat: ";
+
+                for (Double i : tRuleLat) { tripInput = tripInput + i.toString() + " ";}
+                tripInput = tripInput + "\ntRuleLong: ";
+
+                for (Double i : tRuleLong) { tripInput = tripInput + i.toString() + " ";}
+                tripInput = tripInput + "\ntErrorNames: ";
+
+                for (int i : tErrorNames) { tripInput = tripInput + i + " ";}
+                tripInput = tripInput + "\ntErrorValues: ";
+
+                for (Double i : tErrorValues) { tripInput = tripInput + i.toString() + " ";}
+                tripInput = tripInput + "\ntErrorColors: ";
+
+                for (int i : tErrorColors) { tripInput = tripInput + i + " ";}
+
+                EditText saveNameInput = (EditText)findViewById(R.id.saveName);
+                saveName = saveNameInput.getText().toString();
+
+                //System.out.println(tripInput);
+
+                // saves the String to file saveName
+                try {
+                    fOS = openFileOutput(saveName, Context.MODE_PRIVATE);
+                    fOS.write(tripInput.getBytes());
+                    fOS.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Intent transferMapData = new Intent(MapReviewActivity.this, MyTripsFragment.class);
+                transferMapData.putExtra("savedTrip", saveName);
+
+                // reset for the next save
+                tripInput = "tLat: ";
+                saveName = "";
+
+                startActivity(transferMapData);
+            }
+        });
+    }
+
+    // used for testing, doesn't work anymore
+    public void loadSavedTrip() {
+        testSaveButton = (Button) findViewById(R.id.but_testSave);
+
+        testSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    FileInputStream fIS = openFileInput(saveName);
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                            new DataInputStream(fIS)));
+                    String line = "";
+                    String savedOutput = "";
+                    while ((line = reader.readLine())!= null) {
+                        savedOutput = savedOutput + line;
+                        savedOutput = savedOutput + "\n";
+                    }
+                    fIS.close();
+                    System.out.println("This is the saved output: \n" + savedOutput);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

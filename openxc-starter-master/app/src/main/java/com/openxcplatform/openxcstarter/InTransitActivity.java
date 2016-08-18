@@ -111,7 +111,7 @@ public class InTransitActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-    //    stopEverything(); 
+    //    stopEverything();
     }
 
     // when the app is resumed, start everything
@@ -315,14 +315,14 @@ public class InTransitActivity extends Activity {
         });
     }
 
-    // test button
+    // myTrips button
     public void testRule() {
         TestButton = (Button) findViewById(R.id.test_Button);
 
         TestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setPlace(STEER, 420); //test values
+                setPlace(STEER, 420); //myTrips values
             }
         });
     }
