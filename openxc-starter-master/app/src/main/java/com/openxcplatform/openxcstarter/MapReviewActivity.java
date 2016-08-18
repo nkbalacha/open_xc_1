@@ -54,6 +54,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private final String ruleEng = "Exceeded max engine speed";
     private final String ruleAccel = "Accelerated too quickly";
     private final String ruleSteering = "Turned too quickly";
+    private final String ruleSpeedSteer = "Started drifting";
 
     // on activity creation, gets and sets the view to a google map, then starts the home button script
     @Override
@@ -148,6 +149,9 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                         break;
                     case InTransitActivity.STEER:
                         ruleBroken = ruleBroken + ruleSteering + ": " + errorData.get(current).errorValue.get(i);
+                        break;
+                    case InTransitActivity.SPEED_STEER:
+                        ruleBroken = ruleBroken + ruleSpeedSteer + ": " + errorData.get(current).errorValue.get(i);
                         break;
                     default:
                         ruleBroken = ruleBroken + "Unidentified error";

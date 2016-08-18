@@ -27,7 +27,7 @@ public class BasicRules extends Activity {
         /*
         if rpm is over 4000, return 40 for place addition, otherwise return 0.
          */
-        if (newSpd > 2200) {
+        if (newSpd > 3000) {
 // TODO-spencer: this file doesn't need to make calls to setPlace() anymore
             InTransitActivity.setEngBreakTime();
             //TODO-spencer: make sure the above statement still works as needed
@@ -44,7 +44,7 @@ public class BasicRules extends Activity {
      * @return the acceleration value if the rule is broken, or zero otherwise.
      */
     public double ruleMaxAccel(double newAccel) {
-        if (newAccel > 55) {
+        if (newAccel > 40) {
             InTransitActivity.setAccelBreakTime();
             System.out.println("Broke accel rule");
             return newAccel;
@@ -59,7 +59,7 @@ public class BasicRules extends Activity {
      * @return the vehicle speed value that broke the rule, or zero otherwise.
      */
     public double ruleMaxVehSpd(double newSpeed) {
-        if (newSpeed > 40) {
+        if (newSpeed > 80) {
             InTransitActivity.setSpeedBreakTime();
             System.out.println("Broke speed rule");
             return newSpeed;
@@ -139,7 +139,7 @@ public class BasicRules extends Activity {
         if (engVal > 3000
                 && (steerVal > 60 || steerVal < -60)
                 && accelVal > 5) {
-            //InTransitActivity.setAngleBreakTime();
+            InTransitActivity.setSpeedSteeringBreakTime();
 
             return engVal;
         }

@@ -131,7 +131,7 @@ public class InTransitActivity extends Activity {
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
         public void receive(Measurement measurement) {
             vehSpeed = (VehicleSpeed) measurement;
-            System.out.println(vehSpeed.getValue().toString());       // prints are for debugging
+//            System.out.println(vehSpeed.getValue().toString());       // prints are for debugging
 //            System.out.println("Time to next rule broken: " + (speedBreakTime + errorMargin -
 // globalClock.elapsedRealtime()));
             if (SystemClock.elapsedRealtime() > speedBreakTime + errorMargin) {
@@ -148,7 +148,7 @@ public class InTransitActivity extends Activity {
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
             engSpeed = (EngineSpeed) measurement;
-            System.out.println(engSpeed.getValue().toString());       // prints are for debugging
+//            System.out.println(engSpeed.getValue().toString());       // prints are for debugging
             if (SystemClock.elapsedRealtime() > engBreakTime + errorMargin) {
                 if (rulesChecked && RulesFragment.getEngMax() != 0) {
                     setPlace(MAX_ENG, newRules.customMaxEngSpd(getEng(), RulesFragment.getEngMax()));
@@ -163,7 +163,7 @@ public class InTransitActivity extends Activity {
     AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
             accelPosition = (AcceleratorPedalPosition) measurement;
-            System.out.println(accelPosition.getValue().toString());       // prints are for debugging
+//            System.out.println(accelPosition.getValue().toString());       // prints are for debugging
             if (SystemClock.elapsedRealtime() > accelBreakTime + errorMargin) {
                 if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
                     setPlace(MAX_ACCEL, newRules.customMaxAccel(getAccel(), RulesFragment.getAccelMax()));
