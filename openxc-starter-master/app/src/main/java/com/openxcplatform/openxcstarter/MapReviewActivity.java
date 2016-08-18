@@ -5,15 +5,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,7 +19,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -165,33 +160,6 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                     .title(ruleBroken)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
         }
-
-        /*for (int i = 0; i < tRuleLat.size(); i++) {
-            String ruleBroken;
-            switch (tErrorNames.get(i)) {
-                case InTransitActivity.MAX_ACCEL:
-                    ruleBroken = ruleAccel;
-                    break;
-                case InTransitActivity.MAX_ENG:
-                    ruleBroken = ruleEng;
-                    break;
-                case InTransitActivity.MAX_VEH:
-                    ruleBroken = ruleVeh;
-                    break;
-                case InTransitActivity.STEER:
-                    ruleBroken = ruleSteering;
-                    break;
-                default:
-                    ruleBroken = "You fucked up";
-                    break;
-            }
-
-            // adding error markers to the polylines
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(tRuleLat.get(i), tRuleLong.get(i)))
-                    .title(ruleBroken + ": " + tErrorValues.get(i).toString())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
-        }*/
 
         System.out.println("Latitudes: " + tRuleLat.toString());        // for debugging
         System.out.println("Longitude: " + tRuleLong.toString());
