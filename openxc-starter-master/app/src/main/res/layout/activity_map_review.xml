@@ -10,7 +10,9 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openxcplatform.openxcstarter.MapReviewActivity" />
+    tools:context="com.openxcplatform.openxcstarter.MapReviewActivity"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/but_home"
@@ -20,6 +22,7 @@
         android:scaleType="fitCenter" />
 
     <Button
+
         android:id="@+id/but_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
