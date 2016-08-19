@@ -330,6 +330,11 @@ public class InTransitActivity extends Activity {
     // getters and setters
     public static double getVeh() {
 
+        if (vehSpeed == null) {
+            System.out.println("vehicle speed is null.");
+        	return 0.0;
+        }
+
         return vehSpeed.getValue().doubleValue();
     }
 
@@ -340,16 +345,21 @@ public class InTransitActivity extends Activity {
             return 0.0;
         }
 
-        else
-        return engSpeed.getValue().doubleValue();
+        else return engSpeed.getValue().doubleValue();
     }
 
     public static double getSWAngle() {
+
+        if (swAngle == null) {
+        	System.out.println("accelerator position is null.");
+            return 0.0;
+        }
 
         return swAngle.getValue().doubleValue();
     }
 
     public static double getAccel() {
+
         if (accelPosition == null){
             System.out.println("accelerator position is null.");
             return 0.0;

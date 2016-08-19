@@ -121,6 +121,7 @@ public class BasicRules extends Activity {
         if ((maxAngle - minAngle) >= 90) {
             steeringQ.clear();
             InTransitActivity.setAngleBreakTime();
+            System.out.println("Broke turning rule");
             return (maxAngle - minAngle);
         }
         return 0;
@@ -140,7 +141,7 @@ public class BasicRules extends Activity {
                 && (steerVal > 60 || steerVal < -60)
                 && accelVal > 5) {
             InTransitActivity.setSpeedSteeringBreakTime();
-
+            System.out.println("Broke drifting rule");
             return engVal;
         }
 

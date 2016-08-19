@@ -53,7 +53,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private final String ruleSpeedSteer = "Started drifting";
 
     private Button saveButton;
-    String tripInput = "tLat: ";
+    String tripInput = "<";
     String saveName = "";
 
     // on activity creation, gets and sets the view to a google map, then starts the home button script
@@ -201,38 +201,40 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View view) {
                 // so we need to store: tLat, tLong, tRuleLat, tRuleLong, tErrorNames, tErrorValues, tErrorColors
                 for (Double i : tLat) {
-                    tripInput = tripInput + i.toString() + " ";
+                    tripInput = tripInput + "(" + i.toString() + ")";
                 }
-                tripInput = tripInput + "\ntLong: ";
+                tripInput = tripInput + ">\n<";
 
                 for (Double i : tLong) {
-                    tripInput = tripInput + i.toString() + " ";
+                    tripInput = tripInput + "(" + i.toString() + ")";
                 }
-                tripInput = tripInput + "\ntRuleLat: ";
+                tripInput = tripInput + ">\n<";
 
                 for (Double i : tRuleLat) {
-                    tripInput = tripInput + i.toString() + " ";
+                    tripInput = tripInput + "(" + i.toString() + ")";
                 }
-                tripInput = tripInput + "\ntRuleLong: ";
+                tripInput = tripInput + ">\n<";
 
                 for (Double i : tRuleLong) {
-                    tripInput = tripInput + i.toString() + " ";
+                    tripInput = tripInput + "(" + i.toString() + ")";
                 }
-                tripInput = tripInput + "\ntErrorNames: ";
-
-                for (int i : tErrorNames) {
-                    tripInput = tripInput + i + " ";
-                }
-                tripInput = tripInput + "\ntErrorValues: ";
+                tripInput = tripInput + ">\n<";
 
                 for (Double i : tErrorValues) {
-                    tripInput = tripInput + i.toString() + " ";
+                    tripInput = tripInput + "(" + i.toString() + ")";
                 }
-                tripInput = tripInput + "\ntErrorColors: ";
+                tripInput = tripInput + ">\n<";
+
+                for (int i : tErrorNames) {
+                    tripInput = tripInput + "(" + i + ")";
+                }
+                tripInput = tripInput + ">\n<";
 
                 for (int i : tErrorColors) {
-                    tripInput = tripInput + i + " ";
+                    tripInput = tripInput + "(" + i + ")";
                 }
+                tripInput = tripInput + ">";
+
                 EditText saveNameInput = (EditText) findViewById(R.id.saveName);
                 saveName = saveNameInput.getText().toString();
 
@@ -242,10 +244,10 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 Intent transferMapData = new Intent(MapReviewActivity.this, MyTripsActivity.class);
                 transferMapData.putExtra("tripData", tripInput);
                 transferMapData.putExtra("tripName", saveName);
-                transferMapData.putExtra("bet", 1);
+                transferMapData.putExtra("testBox", 1);
 
                 // reset for the next save
-                tripInput = "tLat: ";
+                tripInput = "<";
                 saveName = "";
 
                 startActivity(transferMapData);
