@@ -1,15 +1,31 @@
 package com.openxcplatform.openxcstarter;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class TripMapReview extends Activity {
+public class TripMapReview extends FragmentActivity implements OnMapReadyCallback {
 
-    public TextView testBox;
+    private GoogleMap mMap;
+
     public String tripName;
     public String dataRetrieved;
 
@@ -26,6 +42,13 @@ public class TripMapReview extends Activity {
     private ArrayList<Double> tErrorValues = new ArrayList<Double>();
     private ArrayList<Integer> tErrorColors = new ArrayList<Integer>();
 
+    // outputs for mistakes made in the error markers
+    private final String ruleVeh = "Exceeded max vehicle speed";
+    private final String ruleEng = "Exceeded max engine speed";
+    private final String ruleAccel = "Accelerated too quickly";
+    private final String ruleSteering = "Turned too quickly";
+    private final String ruleSpeedSteer = "Started drifting";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +58,106 @@ public class TripMapReview extends Activity {
         dataRetrieved= (String)getIntent().getSerializableExtra("datasent");
 
         tripName= (String)getIntent().getSerializableExtra("name");
-        testBox = (TextView)findViewById(R.id.output_box);
-        testBox.setText(dataRetrieved);
-        System.out.println(dataRetrieved);
+    //    System.out.println(dataRetrieved);
         parseData(dataRetrieved);
-        System.out.println(tLat.toString() + "\n" + tLong.toString() + "\n" + tRuleLat.toString()
+    /*    System.out.println(tLat.toString() + "\n" + tLong.toString() + "\n" + tRuleLat.toString()
                 + "\n" + tRuleLong.toString() + "\n" + tErrorNames.toString() + "\n"
                 + tErrorValues.toString() + "\n" + tErrorColors.toString());
+    */
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.MyTripMap);
+        mapFragment.getMapAsync(this);
     }
+
+    public void onMapReady(GoogleMap googleMap) {
+        // setting up the google map, enabling location services
+        mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
+        LocationManager locationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+
+        // adding polylines if there are coordinates available
+        if (tLat.size() == 0 || tLong.size() == 0) {
+            // do nothing
+        } else {
+            // adds an azure marker for the start and end of the trip
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(tLat.get(0), tLong.get(0)))
+                    .title("Start of trip")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(tLat.get(tLat.size() - 1), tLong.get(tLong.size() - 1)))
+                    .title("End of trip")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+
+            // moves camera to center on the end of the trip
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(tLat.get(tLat.size() - 1),
+                    tLong.get(tLong.size() - 1)), 16));
+
+            // makes polylines using latitude/longitude/color
+            for (int i = 0; i < tLat.size() - 1; i++) {
+                // algorithm for determining polyline color
+                if (tErrorColors.get(i) < 128) {
+                    polyColor = (Color.argb(255, tErrorColors.get(i) * 2, 255, 0));
+                }
+                if (tErrorColors.get(i) >= 128) {
+                    polyColor = (Color.argb(255, 255, 256 - 2 * (tErrorColors.get(i) - 127), 0));
+                }
+                // actually making the polyline
+                mMap.addPolyline(new PolylineOptions().geodesic(true)
+                        .add(new LatLng(tLat.get(i), tLong.get(i)))
+                        .add(new LatLng(tLat.get(i + 1), tLong.get(i + 1)))
+                        .color(polyColor)
+                );
+            }
+        }
+
+        HashMap<Coordinate, ErrorInfo> errorData = new HashMap<Coordinate, ErrorInfo>();
+        for (int i = 0; i < tRuleLat.size(); i++) {
+            Coordinate newCoord = new Coordinate(tRuleLat.get(i), tRuleLong.get(i));
+            ErrorInfo newError = new ErrorInfo(tErrorNames.get(i), tErrorValues.get(i));
+            if (!errorData.containsKey(newCoord)) {
+                errorData.put(newCoord, newError);
+            } else {
+                errorData.get(newCoord).add(tErrorNames.get(i), tErrorValues.get(i));
+            }
+        }
+
+        for (Coordinate current : errorData.keySet()) {
+            String ruleBroken = "";
+            for(int i = 0; i < errorData.get(current).errorNumber.size(); i++) {
+                switch (errorData.get(current).errorNumber.get(i)) {
+                    case InTransitActivity.MAX_ACCEL:
+                        ruleBroken = ruleBroken + ruleAccel + ": " + errorData.get(current).errorValue.get(i);
+                        break;
+                    case InTransitActivity.MAX_ENG:
+                        ruleBroken = ruleBroken + ruleEng + ": " + errorData.get(current).errorValue.get(i);
+                        break;
+                    case InTransitActivity.MAX_VEH:
+                        ruleBroken = ruleBroken + ruleVeh + ": " + errorData.get(current).errorValue.get(i);
+                        break;
+                    case InTransitActivity.STEER:
+                        ruleBroken = ruleBroken + ruleSteering + ": " + errorData.get(current).errorValue.get(i);
+                        break;
+                    case InTransitActivity.SPEED_STEER:
+                        ruleBroken = ruleBroken + ruleSpeedSteer + ": " + errorData.get(current).errorValue.get(i);
+                        break;
+                    default:
+                        ruleBroken = ruleBroken + "Unidentified error";
+                        break;
+                }
+                ruleBroken = ruleBroken + "\n";
+            }
+
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(current.lat , current.lng))
+                    .title(ruleBroken)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+        }
+    }
+
 
     public void parseData(String dataRetrieved) {
         String currLine = "";
@@ -83,9 +198,8 @@ public class TripMapReview extends Activity {
                 }
                 currLine = currLine.substring(r + 1);
             }
-            System.out.println("CURRENT DATA RETRIEVED: " + dataRetrieved);
             dataRetrieved = dataRetrieved.substring(right + 1);
-            System.out.println("CURRENT DATA RETRIEVED: " + dataRetrieved);
+            //System.out.println("CURRENT DATA RETRIEVED: " + dataRetrieved);
         }
     }
 }
