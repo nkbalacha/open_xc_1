@@ -10,7 +10,7 @@
     tools:context="com.openxcplatform.openxcstarter.TripMapReview">
 
     <TextView
-        android:id="@+id/tru"
+        android:id="@+id/output_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
