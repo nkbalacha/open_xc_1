@@ -21,8 +21,8 @@ public class MyTripsActivity extends ListActivity {
 
     ArrayAdapter<Comment> adapter = (ArrayAdapter<Comment>) getListAdapter();
     Comment comment = null;
-    String trip_name;
-    String trip_data;
+    String tripName;
+    String tripData;
     int buttonBoolean;
 
     JSONObject json= new JSONObject();
@@ -39,16 +39,17 @@ public class MyTripsActivity extends ListActivity {
         dataSource.open();
 
         List<Comment> values = dataSource.getAllComments();
-
-        buttonBoolean =(Integer)getIntent().getSerializableExtra("testBox");
-        trip_name=(String)getIntent().getSerializableExtra("tripName");
-        trip_data = (String)getIntent().getSerializableExtra("tripData");
-        coordinates=(ArrayList<Double>)getIntent().getSerializableExtra("points");
+        if (getIntent().getSerializableExtra("textBox") != null) {
+            buttonBoolean =(Integer)getIntent().getSerializableExtra("testBox");
+            tripName =(String)getIntent().getSerializableExtra("tripName");
+            tripData = (String)getIntent().getSerializableExtra("tripData");
+            coordinates=(ArrayList<Double>)getIntent().getSerializableExtra("points");
+        }
 
         pref = getApplicationContext().getSharedPreferences("database", 0); // 0 - for private mode
         SharedPreferences.Editor editor = pref.edit();
 
-        editor.putString(trip_name,trip_data);
+        editor.putString(tripName, tripData);
         editor.commit();
 
         ArrayAdapter<Comment> adapter = new ArrayAdapter<Comment>(this,
@@ -56,7 +57,7 @@ public class MyTripsActivity extends ListActivity {
         setListAdapter(adapter);
 
         if(buttonBoolean >=1){
-            comment = dataSource.createComment(trip_name/*comments[nextInt]*/);
+            comment = dataSource.createComment(tripName/*comments[nextInt]*/);
             adapter.add(comment);
             buttonBoolean++;
         }
@@ -113,7 +114,6 @@ public class MyTripsActivity extends ListActivity {
         data= pref.getString(buttonText,null);
         p.putExtra("name", buttonText);
         p.putExtra("datasent",data);
-        //System.out.println(data);
         startActivity(p);
     }
 

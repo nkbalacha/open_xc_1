@@ -2,6 +2,7 @@ package com.openxcplatform.openxcstarter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.LocationManager;
@@ -58,7 +59,7 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
         dataRetrieved= (String)getIntent().getSerializableExtra("datasent");
 
         tripName= (String)getIntent().getSerializableExtra("name");
-    //    System.out.println(dataRetrieved);
+
         parseData(dataRetrieved);
     /*    System.out.println(tLat.toString() + "\n" + tLong.toString() + "\n" + tRuleLat.toString()
                 + "\n" + tRuleLong.toString() + "\n" + tErrorNames.toString() + "\n"
@@ -158,6 +159,11 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(TripMapReview.this, StartActivity.class));
+        finish();
+    }
 
     public void parseData(String dataRetrieved) {
         String currLine = "";
