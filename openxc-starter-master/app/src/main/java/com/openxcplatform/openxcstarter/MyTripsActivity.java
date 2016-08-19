@@ -39,7 +39,8 @@ public class MyTripsActivity extends ListActivity {
         dataSource.open();
 
         List<Comment> values = dataSource.getAllComments();
-        if (getIntent().getSerializableExtra("textBox") != null) {
+        //System.out.println(getIntent().getSerializableExtra("textBox") != null);
+        if (MapReviewActivity.getDataSent() == true) {
             buttonBoolean =(Integer)getIntent().getSerializableExtra("testBox");
             tripName =(String)getIntent().getSerializableExtra("tripName");
             tripData = (String)getIntent().getSerializableExtra("tripData");
