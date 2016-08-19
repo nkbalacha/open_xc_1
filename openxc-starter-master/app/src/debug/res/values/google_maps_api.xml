@@ -18,6 +18,6 @@
     TODO: will every user need to put in their own API key?
     -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-        AIzaSyAvDlxqQGx6i7Ucmq8ZPVyH7nJpe9tYe2o
+        AIzaSyCVQd5lPFgt1EwKuQVNm3GUNv_Jq72TKRs
     </string>
 </resources>
