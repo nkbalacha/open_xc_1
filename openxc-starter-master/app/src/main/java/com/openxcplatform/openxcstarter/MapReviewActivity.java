@@ -55,6 +55,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private Button saveButton;
     String tripInput = "<";
     String saveName = "";
+    private static boolean dataSent = false;
 
     // on activity creation, gets and sets the view to a google map, then starts the home button script
     @Override
@@ -249,9 +250,12 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 // reset for the next save
                 tripInput = "<";
                 saveName = "";
-
+                dataSent = true;
                 startActivity(transferMapData);
             }
         });
     }
+
+    public static boolean getDataSent() { return dataSent;};
+
 }
