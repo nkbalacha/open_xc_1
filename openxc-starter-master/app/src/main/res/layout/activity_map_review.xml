@@ -10,7 +10,9 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.openxcplatform.openxcstarter.MapReviewActivity" />
+    tools:context="com.openxcplatform.openxcstarter.MapReviewActivity"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/but_home"
@@ -18,5 +20,22 @@
         android:layout_height="40dp"
         android:background="@drawable/home_symbol"
         android:scaleType="fitCenter" />
+
+    <Button
+
+        android:id="@+id/but_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:text="Save Trip"/>
+
+    <EditText
+        android:id="@+id/saveName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="trip name"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/but_save"/>
 
 </RelativeLayout>

@@ -1,15 +1,14 @@
 package com.openxcplatform.openxcstarter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.LocationManager;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.support.v4.app.FragmentActivity;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,30 +19,29 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MapReviewActivity extends FragmentActivity implements OnMapReadyCallback {
+public class TripMapReview extends FragmentActivity implements OnMapReadyCallback {
 
-    // map initialization
     private GoogleMap mMap;
 
-    // latitude and longitude to make polylines, with their color
-    private ArrayList<Double> tLat;
-    private ArrayList<Double> tLong;
+    public String tripName;
+    public String dataRetrieved;
+
+    private ArrayList<Double> tLat = new ArrayList<Double>();
+    private ArrayList<Double> tLong = new ArrayList<Double>();
     private int polyColor;
 
     // lat/long of error places
-    private ArrayList<Double> tRuleLat;
-    private ArrayList<Double> tRuleLong;
+    private ArrayList<Double> tRuleLat = new ArrayList<Double>();
+    private ArrayList<Double> tRuleLong = new ArrayList<Double>();
 
     // error information
-    private ArrayList<Integer> tErrorNames;
-    private ArrayList<Double> tErrorValues;
-    private ArrayList<Integer> tErrorColors;
-
-    // button in top left that takes you back to home screen
-    private Button homeButton;
+    private ArrayList<Integer> tErrorNames = new ArrayList<Integer>();
+    private ArrayList<Double> tErrorValues = new ArrayList<Double>();
+    private ArrayList<Integer> tErrorColors = new ArrayList<Integer>();
 
     // outputs for mistakes made in the error markers
     private final String ruleVeh = "Exceeded max vehicle speed";
@@ -52,41 +50,32 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private final String ruleSteering = "Turned too quickly";
     private final String ruleSpeedSteer = "Started drifting";
 
-    // button to save trip
-    private Button saveButton;
 
-    // variables for storing the saved data
-    String tripInput = "<";
-    String saveName = "";
-    private static boolean dataSent = false;
-
-    // on activity creation, gets and sets the view to a google map, then starts the home button script
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map_review);
+        setContentView(R.layout.activity_trip_map_review);
+
+        dataRetrieved= (String)getIntent().getSerializableExtra("datasent");
+
+        tripName= (String)getIntent().getSerializableExtra("name");
+
+        parseData(dataRetrieved);
+    /*    System.out.println(tLat.toString() + "\n" + tLong.toString() + "\n" + tRuleLat.toString()
+                + "\n" + tRuleLong.toString() + "\n" + tErrorNames.toString() + "\n"
+                + tErrorValues.toString() + "\n" + tErrorColors.toString());
+    */
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.MyTripMap);
         mapFragment.getMapAsync(this);
-        goToHome();
     }
 
-    // when the map is initialized, get all the relevant data for polylines/error markers from
-    // InTransitActivity
-    @Override
     public void onMapReady(GoogleMap googleMap) {
-        // data transfer from InTransitActivity to this activity
-        tLat = (ArrayList<Double>) getIntent().getSerializableExtra("latitude");
-        tLong = (ArrayList<Double>) getIntent().getSerializableExtra("longitude");
-        tRuleLat = (ArrayList<Double>) getIntent().getSerializableExtra("ruleLatitude");
-        tRuleLong = (ArrayList<Double>) getIntent().getSerializableExtra("ruleLongitude");
-        tErrorNames = (ArrayList<Integer>) getIntent().getSerializableExtra("errorNames");
-        tErrorValues = (ArrayList<Double>) getIntent().getSerializableExtra("errorValues");
-        tErrorColors = (ArrayList<Integer>) getIntent().getSerializableExtra("errorColors");
-
         // setting up the google map, enabling location services
         mMap = googleMap;
-        LocationManager locationManager = (LocationManager)     // I don't think these lines are necessary
+        mMap.setMyLocationEnabled(true);
+        LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
@@ -126,7 +115,6 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
 
-        // restructures error data
         HashMap<Coordinate, ErrorInfo> errorData = new HashMap<Coordinate, ErrorInfo>();
         for (int i = 0; i < tRuleLat.size(); i++) {
             Coordinate newCoord = new Coordinate(tRuleLat.get(i), tRuleLong.get(i));
@@ -138,7 +126,6 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
 
-        // plots every broken rule based on the rule #
         for (Coordinate current : errorData.keySet()) {
             String ruleBroken = "";
             for(int i = 0; i < errorData.get(current).errorNumber.size(); i++) {
@@ -165,110 +152,60 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 ruleBroken = ruleBroken + "\n";
             }
 
-            // adds marker of broken rule
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(current.lat , current.lng))
                     .title(ruleBroken)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
         }
-
-        saveTrip();
-
-    /*    System.out.println("Latitudes: " + tRuleLat.toString());        // for debugging
-        System.out.println("Longitude: " + tRuleLong.toString());
-        System.out.println("Broken rule numbers: " + tErrorNames.toString());
-        System.out.println("Broken rule values: " + tErrorValues.toString());*/
     }
 
-    // clicking the back button returns to home page
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(MapReviewActivity.this, StartActivity.class));
+        startActivity(new Intent(TripMapReview.this, StartActivity.class));
         finish();
     }
 
-    // script for the home button in the top left
-    public void goToHome() {
-        homeButton = (Button) findViewById(R.id.but_home);
+    public void parseData(String dataRetrieved) {
+        String currLine = "";
 
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent changePage = new Intent(MapReviewActivity.this, StartActivity.class);
+        for (int lineNum = 1; lineNum <= 7; lineNum++) {
+            // made the single line into a substring
+            int left = dataRetrieved.indexOf("<");
+            int right = dataRetrieved.indexOf(">");
+            currLine = dataRetrieved.substring(left + 1, right);
 
-                startActivity(changePage);
+            while (currLine.indexOf("(") != -1) {
+                int l = currLine.indexOf("(");
+                int r = currLine.indexOf(")");
+                Double parseDouble = Double.parseDouble(currLine.substring(l + 1, r));
+
+                switch(lineNum) {
+                    case 1:
+                        tLat.add(parseDouble);
+                        break;
+                    case 2:
+                        tLong.add(parseDouble);
+                        break;
+                    case 3:
+                        tRuleLat.add(parseDouble);
+                        break;
+                    case 4:
+                        tRuleLong.add(parseDouble);
+                        break;
+                    case 5:
+                        tErrorValues.add(parseDouble);
+                        break;
+                    case 6:
+                        tErrorNames.add(Integer.parseInt(currLine.substring(l + 1, r)));
+                        break;
+                    case 7:
+                        tErrorColors.add(Integer.parseInt(currLine.substring(l + 1, r)));
+                        break;
+                }
+                currLine = currLine.substring(r + 1);
             }
-        });
+            dataRetrieved = dataRetrieved.substring(right + 1);
+            //System.out.println("CURRENT DATA RETRIEVED: " + dataRetrieved);
+        }
     }
-
-    // saves data of trip and sends you to the MyTrips page
-    public void saveTrip() {
-        saveButton = (Button) findViewById(R.id.but_save);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                // turns all the arrays and stores as one variable for parsing later
-                for (Double i : tLat) {
-                    tripInput = tripInput + "(" + i.toString() + ")";
-                }
-                tripInput = tripInput + ">\n<";
-
-                for (Double i : tLong) {
-                    tripInput = tripInput + "(" + i.toString() + ")";
-                }
-                tripInput = tripInput + ">\n<";
-
-                for (Double i : tRuleLat) {
-                    tripInput = tripInput + "(" + i.toString() + ")";
-                }
-                tripInput = tripInput + ">\n<";
-
-                for (Double i : tRuleLong) {
-                    tripInput = tripInput + "(" + i.toString() + ")";
-                }
-                tripInput = tripInput + ">\n<";
-
-                for (Double i : tErrorValues) {
-                    tripInput = tripInput + "(" + i.toString() + ")";
-                }
-                tripInput = tripInput + ">\n<";
-
-                for (int i : tErrorNames) {
-                    tripInput = tripInput + "(" + i + ")";
-                }
-                tripInput = tripInput + ">\n<";
-
-                for (int i : tErrorColors) {
-                    tripInput = tripInput + "(" + i + ")";
-                }
-                tripInput = tripInput + ">";
-
-                // uses the input text to name the data being stored
-                EditText saveNameInput = (EditText) findViewById(R.id.saveName);
-                saveName = saveNameInput.getText().toString();
-
-                //System.out.println(tripInput);
-
-                // sends the data to MyTrips page
-                Intent transferMapData = new Intent(MapReviewActivity.this, MyTripsActivity.class);
-                transferMapData.putExtra("tripData", tripInput);
-                transferMapData.putExtra("tripName", saveName);
-                transferMapData.putExtra("testBox", 1);     //I don't think we need this
-
-                // reset for the next save
-                tripInput = "<";
-                saveName = "";
-                dataSent = true;
-                startActivity(transferMapData);
-            }
-        });
-    }
-
-    // getters and setters
-    public static boolean getDataSent() { return dataSent;}
-
-    public static void setDataSent(boolean dataStatus) { dataSent = dataStatus;}
-
 }

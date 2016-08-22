@@ -19,8 +19,6 @@ public class StartActivity extends AppCompatActivity {
     String fragmentArray[] = {"Profile", "Custom Rules", "My Trips", "Stats"};
     DrawerLayout myDL;
 
-    private static final String TAG = "WE NEED A NAME";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +43,11 @@ public class StartActivity extends AppCompatActivity {
                         fragment = new RulesFragment();
                         break;
                     case 2:
-                        fragment = new MyTripsFragment();
+                        fragment = new RulesFragment();
+                        MapReviewActivity.setDataSent(false);
+                        Intent changePage = new Intent(StartActivity.this, MyTripsActivity.class);
+
+                        startActivity(changePage);
                         break;
                     case 3:
                         fragment = new StatsFragment();

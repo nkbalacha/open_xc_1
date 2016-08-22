@@ -3,8 +3,6 @@ package com.openxcplatform.openxcstarter;
 import android.app.Activity;
 
 import java.util.ArrayDeque;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class BasicRules extends Activity {
 
@@ -27,10 +25,11 @@ public class BasicRules extends Activity {
         /*
         if rpm is over 4000, return 40 for place addition, otherwise return 0.
          */
-        if (newSpd > 2200) {
+        if (newSpd > 5000) {
 // TODO-spencer: this file doesn't need to make calls to setPlace() anymore
             InTransitActivity.setEngBreakTime();
             //TODO-spencer: make sure the above statement still works as needed
+            System.out.println("Broke eng rule");
             return newSpd;
         }
         return 0;
@@ -43,14 +42,9 @@ public class BasicRules extends Activity {
      * @return the acceleration value if the rule is broken, or zero otherwise.
      */
     public double ruleMaxAccel(double newAccel) {
-
-//        if (InTransitActivity.getAccel() > 97) {
-//            InTransitActivity.setPlace(30, 3, InTransitActivity.getAccel());
-//            InTransitActivity.setAccelBreakTime();
-//        }
-
-        if (newAccel > 55) {
+        if (newAccel > 65) {
             InTransitActivity.setAccelBreakTime();
+            System.out.println("Broke accel rule");
             return newAccel;
         }
         return 0;
@@ -63,16 +57,9 @@ public class BasicRules extends Activity {
      * @return the vehicle speed value that broke the rule, or zero otherwise.
      */
     public double ruleMaxVehSpd(double newSpeed) {
-
-//        if (InTransitActivity.getVeh() > 90) {
-//            InTransitActivity.setPlace(80);
-//            InTransitActivity.setPlace(80, 2, InTransitActivity.getVeh());
-//            InTransitActivity.setSpeedBreakTime();
-//        }
-
-        if (newSpeed > 40) {
+        if (newSpeed > 120) {
             InTransitActivity.setSpeedBreakTime();
-            System.out.println("Broke rule 1");
+            System.out.println("Broke speed rule");
             return newSpeed;
         }
 
@@ -92,7 +79,7 @@ public class BasicRules extends Activity {
      * Then the maximum and minimum are calculated, and we check if there is a difference of 90
      * degrees or greater.
      */
-    public double ruleSteering(double newAngle) {
+    public double ruleSteering(double newAngle, double newSpeed) {
         // the mod is used to just take the last 4 digits of the execution time, for convenience
 //        System.out.println(System.currentTimeMillis() % 10000);
 
@@ -129,9 +116,10 @@ public class BasicRules extends Activity {
         /*
         if angle difference is 90 or greater, clear the queue, and return the that angle difference.
          */
-        if ((maxAngle - minAngle) >= 90) {
+        if ((maxAngle - minAngle) >= 90 && newSpeed > 25) {
             steeringQ.clear();
             InTransitActivity.setAngleBreakTime();
+            System.out.println("Broke turning rule");
             return (maxAngle - minAngle);
         }
         return 0;
@@ -146,12 +134,15 @@ public class BasicRules extends Activity {
      * @return the engine speed (double) in rpm at which this infraction occurred.
      */
 
+    /*
+    TODO not sure if this rule is significant
+     */
     public double ruleSpeedSteering(double engVal, double accelVal, double steerVal) {
         if (engVal > 3000
                 && (steerVal > 60 || steerVal < -60)
-                && accelVal > 5) {
-            //InTransitActivity.setAngleBreakTime();
-
+                && accelVal > 30) {
+            InTransitActivity.setSpeedSteeringBreakTime();
+            System.out.println("Broke drifting rule");
             return engVal;
         }
 
