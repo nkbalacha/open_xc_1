@@ -28,8 +28,6 @@ public class MyTripsActivity extends ListActivity {
     JSONObject json= new JSONObject();
     SharedPreferences pref;
 
-    public ArrayList<Double> coordinates= new ArrayList<Double>();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +37,10 @@ public class MyTripsActivity extends ListActivity {
         dataSource.open();
 
         List<Comment> values = dataSource.getAllComments();
-        //System.out.println(getIntent().getSerializableExtra("textBox") != null);
         if (MapReviewActivity.getDataSent() == true) {
-            buttonBoolean =(Integer)getIntent().getSerializableExtra("testBox");
+            buttonBoolean =(Integer)getIntent().getSerializableExtra("testBox"); //I don't think we need this
             tripName =(String)getIntent().getSerializableExtra("tripName");
             tripData = (String)getIntent().getSerializableExtra("tripData");
-            coordinates=(ArrayList<Double>)getIntent().getSerializableExtra("points");
         }
 
         pref = getApplicationContext().getSharedPreferences("database", 0); // 0 - for private mode

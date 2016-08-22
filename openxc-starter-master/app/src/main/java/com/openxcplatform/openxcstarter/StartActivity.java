@@ -46,6 +46,7 @@ public class StartActivity extends AppCompatActivity {
                         break;
                     case 2:
                         fragment = new RulesFragment();
+                        MapReviewActivity.setDataSent(false);
                         Intent changePage = new Intent(StartActivity.this, MyTripsActivity.class);
 
                         startActivity(changePage);

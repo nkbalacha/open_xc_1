@@ -179,7 +179,7 @@ public class InTransitActivity extends Activity {
         public void receive(Measurement measurement) {
             swAngle = (SteeringWheelAngle) measurement;
             if (SystemClock.elapsedRealtime() > angleBreakTime + errorMargin) {
-                setPlace(STEER, standardRules.ruleSteering(getSWAngle()));
+                setPlace(STEER, standardRules.ruleSteering(getSWAngle(), getVeh()));
             }
             if (SystemClock.elapsedRealtime() > speedSteeringBreakTime + errorMargin) {
                 setPlace(SPEED_STEER,

@@ -27,7 +27,7 @@ public class BasicRules extends Activity {
         /*
         if rpm is over 4000, return 40 for place addition, otherwise return 0.
          */
-        if (newSpd > 3000) {
+        if (newSpd > 5000) {
 // TODO-spencer: this file doesn't need to make calls to setPlace() anymore
             InTransitActivity.setEngBreakTime();
             //TODO-spencer: make sure the above statement still works as needed
@@ -44,7 +44,7 @@ public class BasicRules extends Activity {
      * @return the acceleration value if the rule is broken, or zero otherwise.
      */
     public double ruleMaxAccel(double newAccel) {
-        if (newAccel > 40) {
+        if (newAccel > 65) {
             InTransitActivity.setAccelBreakTime();
             System.out.println("Broke accel rule");
             return newAccel;
@@ -59,7 +59,7 @@ public class BasicRules extends Activity {
      * @return the vehicle speed value that broke the rule, or zero otherwise.
      */
     public double ruleMaxVehSpd(double newSpeed) {
-        if (newSpeed > 80) {
+        if (newSpeed > 120) {
             InTransitActivity.setSpeedBreakTime();
             System.out.println("Broke speed rule");
             return newSpeed;
@@ -81,7 +81,7 @@ public class BasicRules extends Activity {
      * Then the maximum and minimum are calculated, and we check if there is a difference of 90
      * degrees or greater.
      */
-    public double ruleSteering(double newAngle) {
+    public double ruleSteering(double newAngle, double newSpeed) {
         // the mod is used to just take the last 4 digits of the execution time, for convenience
 //        System.out.println(System.currentTimeMillis() % 10000);
 
@@ -118,7 +118,7 @@ public class BasicRules extends Activity {
         /*
         if angle difference is 90 or greater, clear the queue, and return the that angle difference.
          */
-        if ((maxAngle - minAngle) >= 90) {
+        if ((maxAngle - minAngle) >= 90 && newSpeed > 25) {
             steeringQ.clear();
             InTransitActivity.setAngleBreakTime();
             System.out.println("Broke turning rule");

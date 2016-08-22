@@ -245,7 +245,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 Intent transferMapData = new Intent(MapReviewActivity.this, MyTripsActivity.class);
                 transferMapData.putExtra("tripData", tripInput);
                 transferMapData.putExtra("tripName", saveName);
-                transferMapData.putExtra("testBox", 1);
+                transferMapData.putExtra("testBox", 1);     //I don't think we need this
 
                 // reset for the next save
                 tripInput = "<";
@@ -256,6 +256,8 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public static boolean getDataSent() { return dataSent;};
+    public static boolean getDataSent() { return dataSent;}
+
+    public static void setDataSent(boolean dataStatus) { dataSent = dataStatus;}
 
 }
