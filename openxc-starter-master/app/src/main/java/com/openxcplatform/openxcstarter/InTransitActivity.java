@@ -274,7 +274,7 @@ public class InTransitActivity extends Activity {
                 }
 
                 // cases to make the color gradient
-                if (place > 0 && place < 256) {
+                if (place > 0 && place < 256 && InTransitActivity.getVeh() > 5) {
                     place--;
                 }
                 if (place > 255) {

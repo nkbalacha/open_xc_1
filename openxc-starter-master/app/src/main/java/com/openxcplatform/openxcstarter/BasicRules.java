@@ -77,6 +77,8 @@ public class BasicRules extends Activity {
      * <p/>
      * Then the maximum and minimum are calculated, and we check if there is a difference of 90
      * degrees or greater.
+     *
+     TODO-spencer figure out a function of vehicle speed for steering
      */
     public double ruleSteering(double newAngle, double newSpeed) {
         // the mod is used to just take the last 4 digits of the execution time, for convenience
