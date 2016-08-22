@@ -27,6 +27,7 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
 
+    // parsed data from storage
     public String tripName;
     public String dataRetrieved;
 
@@ -50,31 +51,28 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
     private final String ruleSteering = "Turned too quickly";
     private final String ruleSpeedSteer = "Started drifting";
 
-
+    // when created, checks for data sent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_map_review);
 
         dataRetrieved= (String)getIntent().getSerializableExtra("datasent");
-
         tripName= (String)getIntent().getSerializableExtra("name");
 
+        // parses data and puts into the ArrayLists
         parseData(dataRetrieved);
-    /*    System.out.println(tLat.toString() + "\n" + tLong.toString() + "\n" + tRuleLat.toString()
-                + "\n" + tRuleLong.toString() + "\n" + tErrorNames.toString() + "\n"
-                + tErrorValues.toString() + "\n" + tErrorColors.toString());
-    */
 
+        // creates and syncs map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.MyTripMap);
         mapFragment.getMapAsync(this);
     }
 
+    // when parseData is finished, takes the arrayLists of values and redraws the map
     public void onMapReady(GoogleMap googleMap) {
         // setting up the google map, enabling location services
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -115,6 +113,7 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
             }
         }
 
+        // reorganizes the data into another structure that removes duplicate coordinates
         HashMap<Coordinate, ErrorInfo> errorData = new HashMap<Coordinate, ErrorInfo>();
         for (int i = 0; i < tRuleLat.size(); i++) {
             Coordinate newCoord = new Coordinate(tRuleLat.get(i), tRuleLong.get(i));
@@ -126,6 +125,7 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
             }
         }
 
+        // sets error markers based on rule #
         for (Coordinate current : errorData.keySet()) {
             String ruleBroken = "";
             for(int i = 0; i < errorData.get(current).errorNumber.size(); i++) {
@@ -152,6 +152,7 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
                 ruleBroken = ruleBroken + "\n";
             }
 
+            // adds markers
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(current.lat , current.lng))
                     .title(ruleBroken)
@@ -159,12 +160,14 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    // when back is pressed, goes to the home page
     public void onBackPressed() {
         super.onBackPressed();
         startActivity(new Intent(TripMapReview.this, StartActivity.class));
         finish();
     }
 
+    // script that parses the data and puts it into the arrayLists
     public void parseData(String dataRetrieved) {
         String currLine = "";
 
@@ -205,7 +208,6 @@ public class TripMapReview extends FragmentActivity implements OnMapReadyCallbac
                 currLine = currLine.substring(r + 1);
             }
             dataRetrieved = dataRetrieved.substring(right + 1);
-            //System.out.println("CURRENT DATA RETRIEVED: " + dataRetrieved);
         }
     }
 }

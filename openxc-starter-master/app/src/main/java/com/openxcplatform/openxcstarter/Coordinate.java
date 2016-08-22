@@ -1,7 +1,7 @@
 package com.openxcplatform.openxcstarter;
 
-/**
- * Created by Jeffrey on 8/16/2016.
+/*
+helper class for MapReviewActivity, used to store data
  */
 public class Coordinate {
     public Double lat;

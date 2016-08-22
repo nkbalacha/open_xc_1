@@ -54,10 +54,6 @@ public class RulesFragment extends Fragment {
         return ruleView;
     }
 
-    public static boolean getRulesChecked(){
-        return customRules;
-    }
-
     //helper method for the Done button
     public void save() {
         EditText temp;
@@ -78,10 +74,14 @@ public class RulesFragment extends Fragment {
         }
     }
 
+    // getters
     public static int getvSMax() { return vSMax;}
 
     public static int getEngMax() { return engMax;}
 
     public static int getAccelMax() { return accelMax;}
 
+    public static boolean getRulesChecked(){
+        return customRules;
+    }
 }

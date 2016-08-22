@@ -18,12 +18,11 @@ public class BasicRules extends Activity {
     }
 
     /**
-     * Enforces the maximum engine speed to be 4000 RPM.
+     * Enforces the maximum engine speed to be 5000 RPM.
      */
     public double ruleMaxEngSpd(double newSpd) {
-
         /*
-        if rpm is over 4000, return 40 for place addition, otherwise return 0.
+        if rpm is over 5000, return 40 for place addition, otherwise return 0.
          */
         if (newSpd > 5000) {
 // TODO-spencer: this file doesn't need to make calls to setPlace() anymore
@@ -36,7 +35,7 @@ public class BasicRules extends Activity {
     }
 
     /**
-     * Limits the maximum acceleration pedal value to 97.
+     * Limits the maximum acceleration pedal value to 65.
      *
      * @param newAccel latest acceleration value polled from the vehicle
      * @return the acceleration value if the rule is broken, or zero otherwise.
@@ -51,7 +50,7 @@ public class BasicRules extends Activity {
     }
 
     /**
-     * Limits the maximum vehicle speed value to 90 km/hr.
+     * Limits the maximum vehicle speed value to 120 km/hr.
      *
      * @param newSpeed the latest vehicle speed (km/hr) polled from the vehicle.
      * @return the vehicle speed value that broke the rule, or zero otherwise.
@@ -114,7 +113,8 @@ public class BasicRules extends Activity {
         }
 
         /*
-        if angle difference is 90 or greater, clear the queue, and return the that angle difference.
+        if angle difference is 90 or greater and speed is greater than 25, clear the queue,
+        and return the that angle difference.
          */
         if ((maxAngle - minAngle) >= 90 && newSpeed > 25) {
             steeringQ.clear();
