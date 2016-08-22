@@ -14,16 +14,21 @@ import android.widget.ListView;
 
 public class StartActivity extends AppCompatActivity {
 
+    // used for the navigation drawer
     ListView listView;
     ArrayAdapter<String> listAdapter;
     String fragmentArray[] = {"Profile", "Custom Rules", "My Trips", "Stats"};
     DrawerLayout myDL;
+
+    // button at the bottom
+    public Button SmartTripButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
+        // sets up navigation drawer
         myDL = (DrawerLayout)findViewById(R.id.drawer_layout);
 
         listView = (ListView)findViewById(R.id.listview);
@@ -31,6 +36,7 @@ public class StartActivity extends AppCompatActivity {
                 fragmentArray);
         listView.setAdapter(listAdapter);
 
+        // when something is clicked on in the navigation drawer, create and display that fragment
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -42,7 +48,7 @@ public class StartActivity extends AppCompatActivity {
                     case 1:
                         fragment = new RulesFragment();
                         break;
-                    case 2:
+                    case 2:         // instead of a fragment, we use an activity for the database
                         fragment = new RulesFragment();
                         MapReviewActivity.setDataSent(false);
                         Intent changePage = new Intent(StartActivity.this, MyTripsActivity.class);
@@ -62,10 +68,11 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
+        // starts script for the button
         goToTrip();
     }
 
-    public Button SmartTripButton;
+    // starts InTransitActivity
     public void goToTrip() {
         SmartTripButton = (Button)findViewById(R.id.but_smartTrip);
 

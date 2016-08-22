@@ -14,3 +14,5 @@ public class MyTripsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_my_trips, container, false);
     }
 }
+
+//we can probably delete this
