@@ -3,8 +3,6 @@ package com.openxcplatform.openxcstarter;
 import android.app.Activity;
 
 import java.util.ArrayDeque;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class BasicRules extends Activity {
 
@@ -136,10 +134,13 @@ public class BasicRules extends Activity {
      * @return the engine speed (double) in rpm at which this infraction occurred.
      */
 
+    /*
+    TODO not sure if this rule is significant
+     */
     public double ruleSpeedSteering(double engVal, double accelVal, double steerVal) {
         if (engVal > 3000
                 && (steerVal > 60 || steerVal < -60)
-                && accelVal > 5) {
+                && accelVal > 30) {
             InTransitActivity.setSpeedSteeringBreakTime();
             System.out.println("Broke drifting rule");
             return engVal;

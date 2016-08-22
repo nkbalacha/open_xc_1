@@ -52,7 +52,10 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
     private final String ruleSteering = "Turned too quickly";
     private final String ruleSpeedSteer = "Started drifting";
 
+    // button to save trip
     private Button saveButton;
+
+    // variables for storing the saved data
     String tripInput = "<";
     String saveName = "";
     private static boolean dataSent = false;
@@ -83,8 +86,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
 
         // setting up the google map, enabling location services
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-        LocationManager locationManager = (LocationManager)
+        LocationManager locationManager = (LocationManager)     // I don't think these lines are necessary
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
@@ -124,6 +126,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
 
+        // restructures error data
         HashMap<Coordinate, ErrorInfo> errorData = new HashMap<Coordinate, ErrorInfo>();
         for (int i = 0; i < tRuleLat.size(); i++) {
             Coordinate newCoord = new Coordinate(tRuleLat.get(i), tRuleLong.get(i));
@@ -135,6 +138,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
 
+        // plots every broken rule based on the rule #
         for (Coordinate current : errorData.keySet()) {
             String ruleBroken = "";
             for(int i = 0; i < errorData.get(current).errorNumber.size(); i++) {
@@ -161,6 +165,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 ruleBroken = ruleBroken + "\n";
             }
 
+            // adds marker of broken rule
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(current.lat , current.lng))
                     .title(ruleBroken)
@@ -169,12 +174,13 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
 
         saveTrip();
 
-        System.out.println("Latitudes: " + tRuleLat.toString());        // for debugging
+    /*    System.out.println("Latitudes: " + tRuleLat.toString());        // for debugging
         System.out.println("Longitude: " + tRuleLong.toString());
         System.out.println("Broken rule numbers: " + tErrorNames.toString());
-        System.out.println("Broken rule values: " + tErrorValues.toString());
+        System.out.println("Broken rule values: " + tErrorValues.toString());*/
     }
 
+    // clicking the back button returns to home page
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -195,12 +201,15 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
     }
+
+    // saves data of trip and sends you to the MyTrips page
     public void saveTrip() {
         saveButton = (Button) findViewById(R.id.but_save);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // so we need to store: tLat, tLong, tRuleLat, tRuleLong, tErrorNames, tErrorValues, tErrorColors
+
+                // turns all the arrays and stores as one variable for parsing later
                 for (Double i : tLat) {
                     tripInput = tripInput + "(" + i.toString() + ")";
                 }
@@ -236,12 +245,13 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
                 }
                 tripInput = tripInput + ">";
 
+                // uses the input text to name the data being stored
                 EditText saveNameInput = (EditText) findViewById(R.id.saveName);
                 saveName = saveNameInput.getText().toString();
 
-                System.out.println(tripInput);
+                //System.out.println(tripInput);
 
-
+                // sends the data to MyTrips page
                 Intent transferMapData = new Intent(MapReviewActivity.this, MyTripsActivity.class);
                 transferMapData.putExtra("tripData", tripInput);
                 transferMapData.putExtra("tripName", saveName);
@@ -256,6 +266,7 @@ public class MapReviewActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
+    // getters and setters
     public static boolean getDataSent() { return dataSent;}
 
     public static void setDataSent(boolean dataStatus) { dataSent = dataStatus;}

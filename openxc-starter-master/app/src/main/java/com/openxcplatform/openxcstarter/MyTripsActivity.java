@@ -3,7 +3,6 @@ package com.openxcplatform.openxcstarter;
 import android.app.ListActivity;
 import android.os.Bundle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;

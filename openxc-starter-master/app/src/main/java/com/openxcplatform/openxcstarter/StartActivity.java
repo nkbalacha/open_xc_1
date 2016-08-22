@@ -19,8 +19,6 @@ public class StartActivity extends AppCompatActivity {
     String fragmentArray[] = {"Profile", "Custom Rules", "My Trips", "Stats"};
     DrawerLayout myDL;
 
-    private static final String TAG = "WE NEED A NAME";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
