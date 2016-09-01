@@ -27,59 +27,110 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Defines the actions that must happen after the user starts a "Trip", and before the user
+ * decides to stop the "Trip". This activity listens for vehicle parameter measurements that are
+ * received from the OpenXC Enabler, and calls the rules in BasicRules to evaluate the driver's
+ * behavior.
+ * When the "Stop Trip" button is pressed, the app will proceed to the "Trip Review" page.
+ */
 public class InTransitActivity extends Activity {
 
+    //write a tag label for this activity for convenience
     private static final String TAG = "InTransitActivity";
 
     // all the variables for the background gradient, starts at green
     private ImageView mBackground;
+
+   //TODO: remove red and green if they are not used
     private int red = 0;
     private int green = 255;
+
     /**
-     * Corresponds to how poorly the user has been driving recently. A higher <code>place</code>
+     * Corresponds to how poorly the user has been driving recently. A higher 'place'
      * value signifies more violations. A scale from 0 to 255 that also signifies your location on
      * the color gradient.
      */
     private static int place = 0;
 
-    // all the OpenXC data variables that we measure
+
+    /** An instance of OpenXC's custom class VehicleManager, which does much of the interfacing
+     * work for us. This instance needs to be set up before we can take measurements.
+     */
     private VehicleManager mVehicleManager;
+
+    /**
+     * A static instance of OpenXC's custom class that stores and processes the engine speed (RPM).
+     */
     private static EngineSpeed engSpeed;
+
+    /**
+     * A static instance of OpenXC's custom class that stores and processes the vehicle speed (km/hr).
+     */
     private static VehicleSpeed vehSpeed;
+
+    /**
+     * A static instance of OpenXC's custom class that stores and processes the steering wheel angle (degrees).
+     */
     private static SteeringWheelAngle swAngle;
+
+    /**
+     * A static instance of OpenXC's custom class that stores and processes the accelerator pedal
+     * position (0% to 100%).
+     */
     private static AcceleratorPedalPosition accelPosition;
+
+    /**
+     * A static field to store the most recent latitude value.
+     */
     private static double lat;
+
+    /**
+     * A static field to store the most recent longitude value.
+     */
     private static double lng;
 
-    // map coordinates
+    /** Chronologically stores all latitude values that are polled during the trip.*/
     private ArrayList<Double> totalLat = new ArrayList<>();
+    /** Chronologically stores all longitude values that are polled during the trip.*/
     private ArrayList<Double> totalLong = new ArrayList<>();
 
     // values being sent to the Map Review page
+
+    /** Chronologically stores all latitude values that correspond to broken rules*/
     private static ArrayList<Double> ruleLat = new ArrayList<>();
+    /** Chronologically stores all longitude values that correspond to broken rules*/
     private static ArrayList<Double> ruleLong = new ArrayList<>();
+    /** Chronologically stores the names of violations during the trip*/
     private static ArrayList<Integer> errorNames = new ArrayList<>();
+    /** Chronologically stores the parameter that broke each rule during the trip*/
     private static ArrayList<Double> errorValues = new ArrayList<>();
+    /** Chronologically stores the current screen color rule during the trip (which is used to
+     * map the trip lines with the designated color)*/
     private static ArrayList<Integer> errorColors = new ArrayList<>();
 
-    // misc variables, remind me to sort later
+    // TODO-jeffrey: remind me to sort later
     private BasicRules standardRules = new BasicRules();
+    // TODO-CR
     private CustomRules newRules = new CustomRules();
     private boolean rulesChecked;
 
-    // timer for the background gradient
+    /**Timer object that allows the background gradient (corresponding to driving quality) to
+     * gradually shift back to green.*/
     Timer myTimer = new Timer();
 
-    // buffer to prevent the same rule from being broken multiple times a second
+    // These are time variables that allow us to implement a resting period for each rule after
+    // it is broken (don't want to penalize the driver multiple times for the same infraction).
     private static long speedBreakTime = 0;
     private static long engBreakTime = 0;
     private static long angleBreakTime = 0;
     private static long accelBreakTime = 0;
     private static long speedSteeringBreakTime = 0;
 
+    // by default, the rest period will be 30,000 ms (30 seconds)
     private int errorMargin = 30000;
 
-    // numbering the rules
+    // numbering the rules for more robust handling of cases later on
     static final int MAX_ENG = 1;
     static final int MAX_ACCEL = 2;
     static final int MAX_VEH = 3;
@@ -93,7 +144,10 @@ public class InTransitActivity extends Activity {
     public Button TestButton;    //remove in final presentation
 
 
-    // when this activity is created, we set the view to the initial green gradient
+    /**
+     When this activity is created, we set the view to the initial green gradient. Also starts
+     the timer that constantly shifts the screen back to green.
+      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +156,7 @@ public class InTransitActivity extends Activity {
         // this is the emoji that gets applied
         mBackground = (ImageView) findViewById(R.id.overlay_layer);
 
+       //todo-CR
         // initial check for custom rules
         rulesChecked = RulesFragment.getRulesChecked();
 
@@ -118,12 +173,12 @@ public class InTransitActivity extends Activity {
         testRule();
     }
 
-    // when the app is paused, stop everything
-    // stopEverything prevents memory leaks, but it also prevents app from running in the background
+    /** When the app is paused, just call the default behavior of the superclass (Activity).
+     */
     @Override
     public void onPause() {
         super.onPause();
-        //stopEverything();  //unbinds everything, we may want to remove this for the wishlist goal
+
     }
 
     // when the app is resumed, start everything
