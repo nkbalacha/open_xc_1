@@ -111,9 +111,6 @@ public class InTransitActivity extends Activity {
 
     // TODO-jeffrey: remind me to sort later
     private BasicRules standardRules = new BasicRules();
-    // TODO-CR
-    private CustomRules newRules = new CustomRules();
-    private boolean rulesChecked;
 
     /**Timer object that allows the background gradient (corresponding to driving quality) to
      * gradually shift back to green.*/
@@ -156,10 +153,6 @@ public class InTransitActivity extends Activity {
         // this is the emoji that gets applied
         mBackground = (ImageView) findViewById(R.id.overlay_layer);
 
-       //todo-CR
-        // initial check for custom rules
-        rulesChecked = RulesFragment.getRulesChecked();
-
         // script that changes the gradient from red to green
         myTimer.schedule(new TimerTask() {
             @Override
@@ -197,12 +190,9 @@ public class InTransitActivity extends Activity {
         }
     }
 
-
-    //TODO-CR
     /**
      listener for vehicle speed, includes a check for the mistake margin (you can only break this
-      rule once every 30 seconds), then checks for a custom vs standard ruleset
-      */
+      rule once every 30 seconds) */
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
 
        /**Actions to be performed when a new measurement is received from the Vehicle Manager. */
@@ -216,13 +206,7 @@ public class InTransitActivity extends Activity {
             have elapsed since the last rule break.
              */
             if (SystemClock.elapsedRealtime() > speedBreakTime + errorMargin) {
-
-                //TODO-CR
-                if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
-                    setPlace(MAX_VEH, newRules.customMaxVehSpd(getVeh(), RulesFragment.getvSMax()));
-                } else {
-                    setPlace(MAX_VEH, standardRules.ruleMaxVehSpd(getVeh()));
-                }
+                setPlace(MAX_VEH, standardRules.ruleMaxVehSpd(getVeh()));
             }
         }
     };
@@ -243,13 +227,7 @@ public class InTransitActivity extends Activity {
              */
             if (SystemClock.elapsedRealtime() > engBreakTime + errorMargin) {
 
-                //TODO-CR
-                if (rulesChecked && RulesFragment.getEngMax() != 0) {
-
-                    setPlace(MAX_ENG, newRules.customMaxEngSpd(getEng(), RulesFragment.getEngMax()));
-                } else {
-                    setPlace(MAX_ENG, standardRules.ruleMaxEngSpd(getEng()));
-                }
+                setPlace(MAX_ENG, standardRules.ruleMaxEngSpd(getEng()));
             }
         }
     };
@@ -268,12 +246,7 @@ public class InTransitActivity extends Activity {
              */
             if (SystemClock.elapsedRealtime() > accelBreakTime + errorMargin) {
 
-                //TODO-CR
-                if (rulesChecked && RulesFragment.getAccelMax() != 0) {
-                    setPlace(MAX_ACCEL, newRules.customMaxAccel(getAccel(), RulesFragment.getAccelMax()));
-                } else {
                     setPlace(MAX_ACCEL, standardRules.ruleMaxAccel(getAccel()));
-                }
             }
         }
     };
