@@ -170,7 +170,7 @@ public class InTransitActivity extends Activity {
 
         // button scripts
         goToReview();
-        testRule();
+
     }
 
     /** When the app is paused, just call the default behavior of the superclass (Activity).
@@ -181,27 +181,43 @@ public class InTransitActivity extends Activity {
 
     }
 
-    // when the app is resumed, start everything
+    /** When app is resumed, start everything back up. */
     @Override
     public void onResume() {
+
+        //perform Activity class's default actions for onResume()
         super.onResume();
+
+        /*
+        If the Vehicle Manager object is no longer defined, create one again
+         */
         if (mVehicleManager == null) {
             Intent intent = new Intent(this, VehicleManager.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
 
-    /*
+
+    //TODO-CR
+    /**
      listener for vehicle speed, includes a check for the mistake margin (you can only break this
       rule once every 30 seconds), then checks for a custom vs standard ruleset
       */
     VehicleSpeed.Listener mVSpeedListener = new VehicleSpeed.Listener() {
+
+       /**Actions to be performed when a new measurement is received from the Vehicle Manager. */
         public void receive(Measurement measurement) {
+
+            //cast the measurement as VehicleSpeed object
             vehSpeed = (VehicleSpeed) measurement;
-//            System.out.println(vehSpeed.getValue().toString());       // prints are for debugging
-//            System.out.println("Time to next rule broken: " + (speedBreakTime + errorMargin -
-// globalClock.elapsedRealtime()));
+
+            /*
+            The rule check will only happen if at least an 'errorMargin' amount of milliseconds
+            have elapsed since the last rule break.
+             */
             if (SystemClock.elapsedRealtime() > speedBreakTime + errorMargin) {
+
+                //TODO-CR
                 if (rulesChecked == true && RulesFragment.getvSMax() != 0) {
                     setPlace(MAX_VEH, newRules.customMaxVehSpd(getVeh(), RulesFragment.getvSMax()));
                 } else {
@@ -211,14 +227,25 @@ public class InTransitActivity extends Activity {
         }
     };
 
-    // same as above
+    /**
+     Listener for engine speed, includes a check for the mistake margin (you can only break this
+     rule once every 30 seconds).
+     */
     EngineSpeed.Listener mEngineSpeedListener = new EngineSpeed.Listener() {
         public void receive(Measurement measurement) {
+
+            //cast the incoming measurement as EngineSpeed object.
             engSpeed = (EngineSpeed) measurement;
-//            System.out.println(engSpeed.getValue().toString());       // prints are for debugging
+
+             /*
+            The rule check will only happen if at least an 'errorMargin' amount of milliseconds
+            have elapsed since the last rule break.
+             */
             if (SystemClock.elapsedRealtime() > engBreakTime + errorMargin) {
+
+                //TODO-CR
                 if (rulesChecked && RulesFragment.getEngMax() != 0) {
-                    System.out.println("engine speed ----- "+getEng());
+
                     setPlace(MAX_ENG, newRules.customMaxEngSpd(getEng(), RulesFragment.getEngMax()));
                 } else {
                     setPlace(MAX_ENG, standardRules.ruleMaxEngSpd(getEng()));
@@ -227,13 +254,22 @@ public class InTransitActivity extends Activity {
         }
     };
 
-    // same as above
+    /**
+     Listener for accelerator pedal position, includes a check for the mistake margin (you can only
+     break this rule once every 30 seconds).
+     */
     AcceleratorPedalPosition.Listener mAccelListener = new AcceleratorPedalPosition.Listener() {
         public void receive(Measurement measurement) {
             accelPosition = (AcceleratorPedalPosition) measurement;
-//            System.out.println(accelPosition.getValue().toString());       // prints are for debugging
+
+             /*
+            The rule check will only happen if at least an 'errorMargin' amount of milliseconds
+            have elapsed since the last rule break.
+             */
             if (SystemClock.elapsedRealtime() > accelBreakTime + errorMargin) {
-                if (rulesChecked == true && RulesFragment.getAccelMax() != 0) {
+
+                //TODO-CR
+                if (rulesChecked && RulesFragment.getAccelMax() != 0) {
                     setPlace(MAX_ACCEL, newRules.customMaxAccel(getAccel(), RulesFragment.getAccelMax()));
                 } else {
                     setPlace(MAX_ACCEL, standardRules.ruleMaxAccel(getAccel()));
@@ -242,13 +278,27 @@ public class InTransitActivity extends Activity {
         }
     };
 
-    // same as above
+    /**
+     Listener for steering wheel angle, includes a check for the mistake margin (you can only
+     break this rule once every 30 seconds).
+     */
     SteeringWheelAngle.Listener mWheelAngleListener = new SteeringWheelAngle.Listener() {
         public void receive(Measurement measurement) {
+
+           //cast the incoming measurement as a SteeringWheelAngle object.
             swAngle = (SteeringWheelAngle) measurement;
+
+            /*
+            The rule check will only happen if at least an 'errorMargin' amount of milliseconds
+            have elapsed since the last rule break.
+             */
+
+            //check the basic steering rule
             if (SystemClock.elapsedRealtime() > angleBreakTime + errorMargin) {
                 setPlace(STEER, standardRules.ruleSteering(getSWAngle(), getVeh()));
             }
+
+            //check the speed steering rule
             if (SystemClock.elapsedRealtime() > speedSteeringBreakTime + errorMargin) {
                 setPlace(SPEED_STEER,
                         standardRules.ruleSpeedSteering(getEng(), getAccel(), getSWAngle()));
@@ -256,35 +306,47 @@ public class InTransitActivity extends Activity {
         }
     };
 
-    // listener for latitude, puts the received value into an arrayList of doubles and adds the
-    // current color to another arrayList
+    /** Listener for latitude, puts the received value into an arrayList of doubles and adds the
+    current color to another arrayList. */
     Latitude.Listener mLatListener = new Latitude.Listener() {
         public void receive(Measurement measurement) {
             final Latitude lati = (Latitude) measurement;
+
+           //a Latitude object has methods to access the contained value, and use it as a double.
             lat = lati.getValue().doubleValue();
+
+            //store this latitude value, and update the error color to match current 'place'
             totalLat.add(lat);
             errorColors.add(place);
-//            System.out.println(lati);       // for testing
+
         }
     };
 
-    // same as above
+    /** Listener for longitude, puts the received value into an arrayList of doubles and adds the
+     current color to another arrayList. */
     Longitude.Listener mLongListener = new Longitude.Listener() {
         public void receive(Measurement measurement) {
             final Longitude lg = (Longitude) measurement;
+
+            //a Longitude object has methods to access the contained value, and use it as a double.
             lng = lg.getValue().doubleValue();
+
+            //store this longitude value
             totalLong.add(lng);
         }
     };
 
-    // OpenXC command to support and manage the listeners
+    /** OpenXC command to support and manage the listeners */
     private ServiceConnection mConnection = new ServiceConnection() {
+
+        /** Actions performed when the connection is obtained. */
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             Log.i(TAG, "Bound to VehicleManager");
             mVehicleManager = ((VehicleManager.VehicleBinder) service)
                     .getService();
 
+            //add all of the listeners that are defined above in this class.
             mVehicleManager.addListener(EngineSpeed.class, mEngineSpeedListener);
             mVehicleManager.addListener(VehicleSpeed.class, mVSpeedListener);
             mVehicleManager.addListener(SteeringWheelAngle.class, mWheelAngleListener);
@@ -293,6 +355,7 @@ public class InTransitActivity extends Activity {
             mVehicleManager.addListener(Longitude.class, mLongListener);
         }
 
+        /** Actions performed when the connection is broken. */
         public void onServiceDisconnected(ComponentName className) {
             Log.w(TAG, "VehicleManager Service  disconnected unexpectedly");
             mVehicleManager = null;
@@ -302,10 +365,15 @@ public class InTransitActivity extends Activity {
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
+
+        //no additional functionality added here
         super.onPostCreate(savedInstanceState);
     }
 
-    // the timer!!
+    /**
+     *Method that makes use of a Timer and slowly transitions the app background back to green
+     * (if driving violations have caused it to become yellow/orange/red).
+     */
     public void redToGreen() {
         runOnUiThread(new Runnable() {
             @Override
@@ -342,7 +410,7 @@ public class InTransitActivity extends Activity {
                     mBackground.setBackgroundColor(Color.argb(255, 255, 256 - 2 * (place - 127),
                             0));
                 }
-                System.out.println("place: " + place);  // for testing
+
             }
         });
     }
@@ -383,18 +451,6 @@ public class InTransitActivity extends Activity {
         });
     }
 
-    // test button
-    public void testRule() {
-        TestButton = (Button) findViewById(R.id.test_Button);
-
-        TestButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setPlace(STEER, 420); //test values
-            }
-        });
-    }
-
     /**
      * Adds <code>newPlace</code> to the <code>place</code> field, but keeps <code>place</code>
      * at an upper limit of 255. setPlace() is called when a violation occurs, so this method
@@ -408,11 +464,14 @@ public class InTransitActivity extends Activity {
     //TODO: I think we should change this from public to private (and just call it within
     // this class)
 
-    //TODO-spencer: if newPlace is 0, this method does nothing. Can this be simplified
-    // outside of this method?
-
+        //if errorValue is 0 (rule was not broken), this method ends without doing anything
         if (errorValue > 0) {
-            int newPlace;
+
+            //different rule breaks will have a different severity of color-change toward red
+            int penalty;
+
+            //add the parameters for this rule break to the arraylists of all rule
+            // breaks
             ruleLat.add(lat);
             ruleLong.add(lng);
             errorNames.add(ruleNum);
@@ -422,19 +481,19 @@ public class InTransitActivity extends Activity {
              */
             switch (ruleNum){
                 case MAX_ENG:
-                    newPlace = 40;
+                    penalty = 40;
                     break;
                 case MAX_ACCEL:
-                    newPlace = 30;
+                    penalty = 30;
                     break;
                 case MAX_VEH:
-                    newPlace = 80;
+                    penalty = 80;
                     break;
                 case STEER:
-                    newPlace = 50;
+                    penalty = 50;
                     break;
                 case SPEED_STEER:
-                    newPlace = 100;
+                    penalty = 100;
                     break;
 
                 //the case below is just to catch an unexpected ruleNum value passed in.
@@ -444,11 +503,11 @@ public class InTransitActivity extends Activity {
             }
 
             // guarantees that place does not exceed 255
-            place = Math.min(place + newPlace, 255);
+            place = Math.min(place + penalty, 255);
         }
     }
 
-    // removes and unbinds OpenXC listeners
+    /** removes and unbinds OpenXC listeners */
     private void stopEverything() {
         // stops VehicleManager Listeners
         if (mVehicleManager != null) {
@@ -472,46 +531,56 @@ public class InTransitActivity extends Activity {
         TestButton.setOnClickListener(null);
     }
 
-    // getters and setters
+    /**Get the vehicle speed (double) from the stored vehSpeed field. */
     public static double getVeh() {
+
+        //TODO: additional check to let user know when vehSpeed is staying NULL for
+        //extended period of time (which may or may not be a possible scenario)
         if (vehSpeed == null) {
-            System.out.println("vehicle speed is null.");
             return 0.0;
         }
+
+        //return the vehicle speed as a double
         return vehSpeed.getValue().doubleValue();
     }
 
+    /**Get the engine speed (double) from the stored engSpeed field. */
     public static double getEng() {
+
         if (engSpeed == null){
-            System.out.println("engine speed is null.");
             return 0.0;
         }
+
+
         return engSpeed.getValue().doubleValue();
     }
 
+    /**Get the steering wheel angle (double) from the stored swAngle field. */
     public static double getSWAngle() {
         if (swAngle == null) {
-            System.out.println("accelerator position is null.");
+
             return 0.0;
         }
         return swAngle.getValue().doubleValue();
     }
 
+    /**Get the accelerator pedal position (double) from the stored accelPosition field. */
     public static double getAccel() {
         if (accelPosition == null){
-            System.out.println("accelerator position is null.");
+
             return 0.0;
         }
         return accelPosition.getValue().doubleValue();
     }
 
+    /** Update this rule's break time to the current execution time. */
     public static void setSpeedBreakTime() { speedBreakTime = SystemClock.elapsedRealtime();}
-
+    /** Update this rule's break time to the current execution time. */
     public static void setEngBreakTime() { engBreakTime = SystemClock.elapsedRealtime();}
-
+    /** Update this rule's break time to the current execution time. */
     public static void setAngleBreakTime() { angleBreakTime = SystemClock.elapsedRealtime();}
-
+    /** Update this rule's break time to the current execution time. */
     public static void setAccelBreakTime() { accelBreakTime = SystemClock.elapsedRealtime();}
-
+    /** Update this rule's break time to the current execution time. */
     public static void setSpeedSteeringBreakTime () { speedSteeringBreakTime = SystemClock.elapsedRealtime();}
 }

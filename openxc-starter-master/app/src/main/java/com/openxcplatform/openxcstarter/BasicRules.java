@@ -110,7 +110,7 @@ public class BasicRules extends Activity {
             execution time threshold is reached.
              */
             InTransitActivity.setSpeedBreakTime();
-            System.out.println("Broke speed rule");
+
             return newSpeed;
         }
 
